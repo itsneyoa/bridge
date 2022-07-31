@@ -1,0 +1,13 @@
+# Dependencies
+.yarn/*
+!.yarn/plugins
+!.yarn/sdks
+.pnp.*
+node_modules
+
+# Secrets
+.env
+.minecraft
+
+# Testing server
+server
