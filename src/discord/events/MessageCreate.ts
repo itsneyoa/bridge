@@ -1,7 +1,10 @@
-import { Message } from 'discord.js'
+import { Channel, Message } from 'discord.js'
 import Discord from '..'
 import Chat from '../../structs/Chat'
 import Event from '../../structs/DiscordEvent'
+import cleanContent from '../../utils/CleanDiscordContent'
+import Styles from '../../utils/Styles'
+import { cleanString, containsInvalidCharacters } from '../../utils/ValidMinecraftCharacters'
 
 const InteractionCreate: Event<'messageCreate'> = {
   name: 'messageCreate',
@@ -20,11 +23,23 @@ const InteractionCreate: Event<'messageCreate'> = {
 }
 
 function handleMessage(discord: Discord, message: Message, chat: Chat) {
-  const content = message.cleanContent.trim()
+  let prefix = message.member?.nickname ?? message.author.username
+  let content = cleanContent(message.content, message.channel).trim()
 
-  if (!content) return
+  const invalidContent = containsInvalidCharacters(content)
+  const invalidPrefix = containsInvalidCharacters(prefix)
 
-  return discord.minecraft.execute(`${commands[chat]} ${message.member?.nickname ?? message.author.username}: ${content}`)
+  if (invalidContent) content = cleanString(content)
+
+  if (!content) return message.react(Styles.warnings.emptyMessage.emoji)
+
+  if (invalidPrefix) prefix = cleanString(prefix)
+
+  if (!prefix) prefix = 'Unknown'
+
+  if (invalidContent || invalidPrefix) message.react(Styles.warnings.invalidMessage.emoji)
+
+  return discord.minecraft.execute(`${commands[chat]} ${prefix}: ${content}`)
 }
 
 const commands: { [key in Chat]: `/${string}` } = {

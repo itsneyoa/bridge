@@ -5,6 +5,7 @@ const Spawn: Event<'spawn'> = {
   once: true,
 
   async execute(minecraft) {
+    minecraft.relogAttempts = 0
     console.log('mc ready')
   }
 }

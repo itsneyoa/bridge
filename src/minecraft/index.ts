@@ -8,6 +8,7 @@ import Event from '../structs/MinecraftEvent'
 export default class Minecraft {
   public readonly discord: Discord
   private bot: Bot
+  public relogAttempts = 0
 
   constructor(discord: Discord) {
     this.discord = discord
@@ -42,7 +43,13 @@ export default class Minecraft {
   }
 
   public refreshBot() {
-    this.bot = this.createBot()
+    const delay = this.relogAttempts < 24 ? ++this.relogAttempts * 5 : 24
+
+    console.log(`Relogging in ${delay} seconds`)
+
+    setTimeout(() => {
+      this.bot = this.createBot()
+    }, delay * 1000)
   }
 
   public execute(command: string) {
