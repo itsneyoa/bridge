@@ -9,6 +9,7 @@ export default class Minecraft {
   public readonly discord: Discord
   private bot: Bot
   public relogAttempts = 0
+  public loggedIn = false
 
   constructor(discord: Discord) {
     this.discord = discord

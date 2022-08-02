@@ -5,6 +5,8 @@ const Kicked: Event<'kicked'> = {
   once: false,
 
   async execute(minecraft, reason) {
+    minecraft.loggedIn = false
+
     try {
       const parsedReason = JSON.parse(reason)
       console.log(Object.values(parsedReason).join(', '))

@@ -5,6 +5,8 @@ const End: Event<'end'> = {
   once: false,
 
   async execute(minecraft) {
+    minecraft.loggedIn = false
+    
     minecraft.refreshBot()
   }
 }

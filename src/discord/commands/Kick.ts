@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType } from 'discord.js'
-import DiscordCommand, { reply } from '../../structs/DiscordCommand'
+import DiscordCommand, { execute, reply } from '../../structs/DiscordCommand'
 import Embed from '../../utils/Embed'
 
 const Kick: DiscordCommand = {
@@ -32,8 +32,7 @@ const Kick: DiscordCommand = {
 
     const command = `/g kick ${user} ${reason}`
 
-    discord.minecraft.execute(command)
-    return reply(interaction, Embed('success', `Running \`${command}\``))
+    if (execute(command, discord.minecraft, interaction)) reply(interaction, Embed('success', `Running \`${command}\``))
   }
 }
 

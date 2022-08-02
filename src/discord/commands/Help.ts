@@ -35,7 +35,7 @@ const Help: DiscordCommand = {
             `Guild Channel: <#${discord.config.channels.guild}>`,
             `Officer Channel: <#${discord.config.channels.officer}>`,
             `Staff Role: <@&${discord.config.staffRole}>`,
-            `Version: \`${process.env['npm_package_version']}\``
+            `Version: \`${process.env['npm_package_version'] ?? 'Unknown'}\``
           ].join('\n')
         }
       ],
