@@ -1,6 +1,5 @@
 import { APIEmbed } from 'discord.js'
-import DiscordCommand from '../../structs/DiscordCommand'
-import Embed from '../../utils/Embed'
+import DiscordCommand, { reply } from '../../structs/DiscordCommand'
 
 const Help: DiscordCommand = {
   name: 'help',
@@ -8,7 +7,7 @@ const Help: DiscordCommand = {
   options: [],
   permission: 'all',
   dmPermission: true,
-  async execute(command, discord) {
+  async execute(interaction, discord) {
     const discordCommands = [...discord.commands.values()]
       .sort()
       .map(command => `\`${command.name}\`: ${command.description}`)
@@ -19,7 +18,7 @@ const Help: DiscordCommand = {
     const embed: APIEmbed = {
       author: {
         name: 'Help!',
-        icon_url: command.client.user?.avatarURL() ?? undefined
+        icon_url: interaction.client.user?.avatarURL() ?? undefined
       },
       fields: [
         {
@@ -40,18 +39,14 @@ const Help: DiscordCommand = {
           ].join('\n')
         }
       ],
-      color: command.guild?.members.me?.displayColor,
+      color: interaction.guild?.members.me?.displayColor,
       footer: {
         text: 'Created by neyoa#1572',
         icon_url: 'https://mc-heads.net/avatar/neyoa'
       }
     }
 
-    try {
-      return await command.reply({ embeds: [Embed('success', embed)] })
-    } catch (err) {
-      console.error(err)
-    }
+    return reply(interaction, embed)
   }
 }
 

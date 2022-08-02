@@ -2,13 +2,13 @@ import { ApplicationCommandOptionType } from 'discord.js'
 import DiscordCommand, { reply } from '../../structs/DiscordCommand'
 import Embed from '../../utils/Embed'
 
-const Invite: DiscordCommand = {
-  name: 'invite',
-  description: 'Invites the given user to the guild',
+const Unmute: DiscordCommand = {
+  name: 'unmute',
+  description: 'Unmutes the given user',
   options: [
     {
       name: 'username',
-      description: 'The user to invite',
+      description: 'The user to unmute',
       type: ApplicationCommandOptionType.String,
       minLength: 1,
       maxLength: 16,
@@ -23,11 +23,11 @@ const Invite: DiscordCommand = {
     if (!user) return reply(interaction, Embed('failure', 'User argument not found'))
     if (user.match(/\s/g)) return reply(interaction, Embed('failure', 'User argument cannot contain spaces'))
 
-    const command = `/g invite ${user}`
+    const command = `/g unmute ${user}`
 
     discord.minecraft.execute(command)
     return reply(interaction, Embed('success', `Running \`${command}\``))
   }
 }
 
-export default Invite
+export default Unmute

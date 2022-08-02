@@ -2,32 +2,42 @@ import { ApplicationCommandOptionType } from 'discord.js'
 import DiscordCommand, { reply } from '../../structs/DiscordCommand'
 import Embed from '../../utils/Embed'
 
-const Invite: DiscordCommand = {
-  name: 'invite',
-  description: 'Invites the given user to the guild',
+const Mute: DiscordCommand = {
+  name: 'mute',
+  description: 'Mutes the given user for the given time period',
   options: [
     {
       name: 'username',
-      description: 'The user to invite',
+      description: 'The user to mute',
       type: ApplicationCommandOptionType.String,
       minLength: 1,
       maxLength: 16,
+      required: true
+    },
+    {
+      name: 'time',
+      description: 'The time to mute for. Use m for minutes, h for hours, d for days (eg 30m)',
+      type: ApplicationCommandOptionType.String,
+      minLength: 1,
+      maxLength: 3,
       required: true
     }
   ],
   permission: 'staff',
   dmPermission: false,
   async execute(interaction, discord) {
-    const user = interaction.options.getString('username')
+    const user = interaction.options.getString('username')?.trim()
+    const time = interaction.options.getString('time')?.replace(/\s/g, '')
 
     if (!user) return reply(interaction, Embed('failure', 'User argument not found'))
     if (user.match(/\s/g)) return reply(interaction, Embed('failure', 'User argument cannot contain spaces'))
+    if (!time) return reply(interaction, Embed('failure', 'Time argument not found'))
 
-    const command = `/g invite ${user}`
+    const command = `/g mute ${user} ${time}`
 
     discord.minecraft.execute(command)
     return reply(interaction, Embed('success', `Running \`${command}\``))
   }
 }
 
-export default Invite
+export default Mute

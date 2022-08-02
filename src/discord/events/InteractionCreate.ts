@@ -1,4 +1,5 @@
 import { CommandInteraction, GuildMemberRoleManager, InteractionReplyOptions } from 'discord.js'
+import { reply } from '../../structs/DiscordCommand'
 import Event from '../../structs/DiscordEvent'
 import Embed from '../../utils/Embed'
 
@@ -13,10 +14,7 @@ const InteractionCreate: Event<'interactionCreate'> = {
 
     if (!command) {
       console.error(`Command ${interaction.commandName} called but implementation not found`)
-      return safeReply(interaction, {
-        embeds: [Embed('failure', { description: `Command \`${interaction.commandName}\` could not be found` })],
-        ephemeral: true
-      })
+      return reply(interaction, Embed('failure', `Command \`${interaction.commandName}\` could not be found`), true)
     }
 
     switch (command.permission) {
@@ -26,42 +24,33 @@ const InteractionCreate: Event<'interactionCreate'> = {
             ? interaction.member?.roles.cache.has(discord.config.staffRole)
             : interaction.member?.roles.includes(discord.config.staffRole))
         )
-          return safeReply(interaction, {
-            embeds: [
-              Embed('failure', {
-                description: [`You don't have permission to do that.`, `Required permission: <@&${discord.config.staffRole}>`].join('\n')
-              })
-            ],
-            ephemeral: true
-          })
+          return reply(
+            interaction,
+            Embed('failure', [`You don't have permission to do that.`, `Required permission: <@&${discord.config.staffRole}>`].join('\n')),
+            true
+          )
       case 'owner':
         if (interaction.user.id != process.env['OWNER_ID'])
-          return safeReply(interaction, {
-            embeds: [
-              Embed('failure', {
-                description: [
-                  `You don't have permission to do that.`,
-                  process.env['OWNER_ID'] ? `Required permission: <@!${process.env['OWNER_ID']}>` : `Owner ID not set in configuration`
-                ].join('\n')
-              })
-            ],
-            ephemeral: true
-          })
+          return reply(
+            interaction,
+            Embed(
+              'failure',
+              [
+                `You don't have permission to do that.`,
+                process.env['OWNER_ID'] ? `Required permission: <@!${process.env['OWNER_ID']}>` : `Owner ID not set in configuration`
+              ].join('\n')
+            ),
+            true
+          )
     }
 
     try {
       return await command.execute(interaction, discord)
     } catch (error) {
       console.error(error)
-      return safeReply(interaction, { embeds: [Embed('failure', { description: `Something went wrong while trying to run that` })] })
+      return reply(interaction, Embed('failure', `Something went wrong while trying to run that`))
     }
   }
 }
 
 export default InteractionCreate
-
-async function safeReply(interaction: CommandInteraction, message: InteractionReplyOptions) {
-  try {
-    return await interaction.reply(message)
-  } catch {}
-}

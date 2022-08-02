@@ -1,4 +1,4 @@
-import DiscordCommand from '../../structs/DiscordCommand'
+import DiscordCommand, { reply } from '../../structs/DiscordCommand'
 import Embed from '../../utils/Embed'
 
 const Reload: DiscordCommand = {
@@ -7,15 +7,11 @@ const Reload: DiscordCommand = {
   options: [],
   permission: 'owner',
   dmPermission: true,
-  async execute(command, discord) {
+  async execute(interaction, discord) {
     const commands = await discord.loadCommands()
     await discord.publishCommands()
 
-    try {
-      return await command.reply({ embeds: [Embed('success', { description: `\`${commands}\` commands reloaded` })] })
-    } catch (err) {
-      console.error(err)
-    }
+    reply(interaction, Embed('success', `\`${commands}\` commands reloaded`))
   }
 }
 
