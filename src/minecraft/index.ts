@@ -4,10 +4,12 @@ import Dev from '../utils/Dev'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import Event from '../structs/MinecraftEvent'
+import { FullEmbed } from '../utils/Embed'
 
 export default class Minecraft {
   public readonly discord: Discord
   private bot: Bot
+  public lastStatusMessage: 'logout' | 'login' = 'logout'
   public relogAttempts = 0
   public loggedIn = false
 
@@ -15,6 +17,14 @@ export default class Minecraft {
     this.discord = discord
 
     this.bot = this.createBot()
+  }
+
+  public get username() {
+    return this.bot.username
+  }
+
+  public get version() {
+    return this.bot.version
   }
 
   private createBot() {
@@ -46,7 +56,20 @@ export default class Minecraft {
   public refreshBot() {
     const delay = this.relogAttempts < 24 ? ++this.relogAttempts * 5 : 24
 
-    console.log(`Relogging in ${delay} seconds`)
+    console.log(`Disconnected from the server! Relogging in ${delay} seconds.`)
+
+    if (this.lastStatusMessage == 'login') {
+      this.lastStatusMessage = 'logout'
+      this.discord.sendEmbed(
+        FullEmbed('failure', {
+          author: {
+            name: 'Chat Bridge is Offline'
+          },
+          description: [`I have been kicked from the server, attempting to reconnect`, `Last login: <t:${Math.floor(Date.now() / 1000)}:R>`].join('\n')
+        }),
+        'both'
+      )
+    }
 
     setTimeout(() => {
       this.bot = this.createBot()

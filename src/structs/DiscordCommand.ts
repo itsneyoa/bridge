@@ -1,7 +1,7 @@
 import { APIEmbed, ChatInputApplicationCommandData, ChatInputCommandInteraction } from 'discord.js'
 import Discord from '../discord'
 import Minecraft from '../minecraft'
-import Embed from '../utils/Embed'
+import { SimpleEmbed } from '../utils/Embed'
 
 export default interface DiscordCommand extends ChatInputApplicationCommandData {
   permission: 'all' | 'staff' | 'owner'
@@ -11,7 +11,7 @@ export default interface DiscordCommand extends ChatInputApplicationCommandData 
 export async function reply(interaction: ChatInputCommandInteraction, embed: APIEmbed, ephemeral = false) {
   if (interaction.isRepliable()) {
     try {
-      return await interaction[interaction.replied ? 'editReply' : 'reply']({ embeds: [embed], ephemeral })
+      return await interaction[interaction.replied ? 'editReply' : 'reply']({ embeds: [embed], ephemeral, allowedMentions: { parse: [] } })
     } catch (err) {
       console.error(err)
     }
@@ -20,7 +20,7 @@ export async function reply(interaction: ChatInputCommandInteraction, embed: API
 
 export function execute(command: string, minecraft: Minecraft, interaction: ChatInputCommandInteraction) {
   if (!minecraft.loggedIn) {
-    reply(interaction, Embed('failure', 'The bot is currently disconnected from the server, please try again later'))
+    reply(interaction, SimpleEmbed('failure', 'The bot is currently disconnected from the server, please try again later'))
     return false
   }
 

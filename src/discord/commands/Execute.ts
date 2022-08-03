@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 import DiscordCommand, { execute, reply } from '../../structs/DiscordCommand'
-import Embed from '../../utils/Embed'
+import { SimpleEmbed } from '../../utils/Embed'
 
 const Execute: DiscordCommand = {
   name: 'execute',
@@ -18,11 +18,11 @@ const Execute: DiscordCommand = {
   async execute(interaction, discord) {
     let command = interaction.options.getString('command')?.trim()
 
-    if (!command) return reply(interaction, Embed('failure', 'Command argument not found'))
+    if (!command) return reply(interaction, SimpleEmbed('failure', 'Command argument not found'))
 
     if (!command.startsWith('/')) command = '/' + command
 
-    if (execute(command, discord.minecraft, interaction)) reply(interaction, Embed('success', `Running \`${command}\``))
+    if (execute(command, discord.minecraft, interaction)) reply(interaction, SimpleEmbed('success', `Running \`${command}\``))
   }
 }
 

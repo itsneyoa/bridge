@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 import DiscordCommand, { execute, reply } from '../../structs/DiscordCommand'
-import Embed from '../../utils/Embed'
+import { SimpleEmbed } from '../../utils/Embed'
 
 const Invite: DiscordCommand = {
   name: 'invite',
@@ -20,12 +20,12 @@ const Invite: DiscordCommand = {
   async execute(interaction, discord) {
     const user = interaction.options.getString('username')
 
-    if (!user) return reply(interaction, Embed('failure', 'User argument not found'))
-    if (user.match(/\s/g)) return reply(interaction, Embed('failure', 'User argument cannot contain spaces'))
+    if (!user) return reply(interaction, SimpleEmbed('failure', 'User argument not found'))
+    if (user.match(/\s/g)) return reply(interaction, SimpleEmbed('failure', 'User argument cannot contain spaces'))
 
     const command = `/g invite ${user}`
 
-    if (execute(command, discord.minecraft, interaction)) reply(interaction, Embed('success', `Running \`${command}\``))
+    if (execute(command, discord.minecraft, interaction)) reply(interaction, SimpleEmbed('success', `Running \`${command}\``))
   }
 }
 

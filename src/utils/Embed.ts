@@ -1,6 +1,10 @@
 import { APIEmbed } from 'discord.js'
 import Styles from './Styles'
 
-export default function Embed(type: keyof typeof Styles.colours, description: string, data?: APIEmbed): APIEmbed {
-  return { ...data, ...{ color: Styles.colours[type], description } }
+export function SimpleEmbed(type: keyof typeof Styles.colours, description: string): APIEmbed {
+  return { color: Styles.colours[type], description }
+}
+
+export function FullEmbed(type: keyof typeof Styles.colours, data: APIEmbed): APIEmbed {
+  return { ...data, ...{ color: Styles.colours[type] } }
 }

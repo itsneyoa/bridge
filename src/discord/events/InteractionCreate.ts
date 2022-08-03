@@ -1,7 +1,7 @@
-import { CommandInteraction, GuildMemberRoleManager, InteractionReplyOptions } from 'discord.js'
+import { GuildMemberRoleManager } from 'discord.js'
 import { reply } from '../../structs/DiscordCommand'
 import Event from '../../structs/DiscordEvent'
-import Embed from '../../utils/Embed'
+import { SimpleEmbed } from '../../utils/Embed'
 
 const InteractionCreate: Event<'interactionCreate'> = {
   name: 'interactionCreate',
@@ -14,7 +14,7 @@ const InteractionCreate: Event<'interactionCreate'> = {
 
     if (!command) {
       console.error(`Command ${interaction.commandName} called but implementation not found`)
-      return reply(interaction, Embed('failure', `Command \`${interaction.commandName}\` could not be found`), true)
+      return reply(interaction, SimpleEmbed('failure', `Command \`${interaction.commandName}\` could not be found`), true)
     }
 
     switch (command.permission) {
@@ -26,14 +26,14 @@ const InteractionCreate: Event<'interactionCreate'> = {
         )
           return reply(
             interaction,
-            Embed('failure', [`You don't have permission to do that.`, `Required permission: <@&${discord.config.staffRole}>`].join('\n')),
+            SimpleEmbed('failure', [`You don't have permission to do that.`, `Required permission: <@&${discord.config.staffRole}>`].join('\n')),
             true
           )
       case 'owner':
         if (interaction.user.id != process.env['OWNER_ID'])
           return reply(
             interaction,
-            Embed(
+            SimpleEmbed(
               'failure',
               [
                 `You don't have permission to do that.`,
@@ -48,7 +48,7 @@ const InteractionCreate: Event<'interactionCreate'> = {
       return await command.execute(interaction, discord)
     } catch (error) {
       console.error(error)
-      return reply(interaction, Embed('failure', `Something went wrong while trying to run that`))
+      return reply(interaction, SimpleEmbed('failure', `Something went wrong while trying to run that`))
     }
   }
 }

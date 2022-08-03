@@ -1,4 +1,4 @@
-import { Client } from 'discord.js'
+import { APIEmbed, Client, MessageOptions } from 'discord.js'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import Event from '../structs/DiscordEvent'
@@ -6,6 +6,7 @@ import Command from '../structs/DiscordCommand'
 import Dev from '../utils/Dev'
 import Config from '../utils/Config'
 import Minecraft from '../minecraft'
+import Chat from '../structs/Chat'
 
 export default class Discord {
   private readonly client: Client<true>
@@ -36,7 +37,6 @@ export default class Discord {
       })
 
       client.once('ready', async client => {
-        console.log('doin discord setup')
         const discord = new this(client, config)
 
         await discord.registerEvents()
@@ -82,11 +82,23 @@ export default class Discord {
     }
   }
 
-  public async send({ username, message }: { username: string; message: string }, destination: 'guild' | 'officer') {
-    const channel = await this.client.channels.fetch(this.config.channels[destination])
+  private async sendToChannel(content: MessageOptions, destination: Chat) {
+    const channel = this.client.channels.cache.get(this.config.channels[destination]) ?? (await this.client.channels.fetch(this.config.channels[destination]))
 
     if (channel?.isTextBased()) {
-      return await channel.send({ content: `${username}: ${message}`, allowedMentions: { parse: [] } })
+      return await channel.send({ ...content, ...{ allowedMentions: { parse: [] } } })
     }
+  }
+
+  public async sendChatMessage({ username, message }: { username: string; message: string }, destination: Chat) {
+    return this.sendToChannel({ content: `${username}: ${message}` }, destination)
+  }
+
+  public async sendEmbed(embed: APIEmbed, destination: Chat | 'both') {
+    if (destination == 'both') {
+      return await Promise.all([this.sendToChannel({ embeds: [embed] }, 'guild'), this.sendToChannel({ embeds: [embed] }, 'officer')])
+    }
+
+    return await this.sendToChannel({ embeds: [embed] }, destination)
   }
 }
