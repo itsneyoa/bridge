@@ -1,4 +1,3 @@
-import Chat from '../../structs/Chat'
 import Event from '../../structs/MinecraftEvent'
 
 const MessageStr: Event<'messagestr'> = {
@@ -8,12 +7,13 @@ const MessageStr: Event<'messagestr'> = {
   async execute(minecraft, message, position, json) {
     console.log(message)
 
-    if (message.startsWith('Guild >')) {
-      minecraft.discord.send(message, 'guild')
-    }
+    const match = message.match(/^(Guild|Officer) > (?:\[.+?\] )?(\w+?)(?: \[.+?\])?: (.+)$/)
 
-    if (message.startsWith('Officer >')) {
-      minecraft.discord.send(message, 'officer')
+    if (match) {
+      const [chat, username, message] = [match[1].toLowerCase(), match[2], match[3]]
+
+      if (chat != 'guild' && chat != 'officer') return
+      return minecraft.discord.send({ username, message }, chat)
     }
   }
 }

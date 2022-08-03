@@ -82,13 +82,11 @@ export default class Discord {
     }
   }
 
-  public async send(message: string, destination: 'guild' | 'officer') {
+  public async send({ username, message }: { username: string; message: string }, destination: 'guild' | 'officer') {
     const channel = await this.client.channels.fetch(this.config.channels[destination])
 
-    console.log(channel)
-
     if (channel?.isTextBased()) {
-      return await channel.send({ content: message, allowedMentions: { parse: [] } })
+      return await channel.send({ content: `${username}: ${message}`, allowedMentions: { parse: [] } })
     }
   }
 }
