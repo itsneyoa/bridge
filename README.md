@@ -2,7 +2,7 @@
 
 ## To do
 
-- A logger to console and optionally a discord channel
+- Use a webhook for logging via discord and colourise the terminal output for console
 - Feedback for slash commands (invite, unmute, etc)
 - Embed broadcasts for any events that happen ingame
 - Messages for when the bot is online and offline

@@ -7,6 +7,7 @@ export default class Config {
     [key in Chat]: string
   }
   public readonly staffRole: string
+  public readonly logChannel?: string
 
   constructor() {
     this.token = this.resolveEnv('DISCORD_TOKEN')
@@ -16,6 +17,7 @@ export default class Config {
       officer: this.resolveEnv('OFFICER_CHANNEL_ID')
     }
     this.staffRole = this.resolveEnv('STAFF_ROLE_ID')
+    this.logChannel = process.env['LOG_CHANNEL_ID']
   }
 
   private resolveEnv(name: string): string {

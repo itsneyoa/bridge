@@ -7,9 +7,11 @@ import Dev from '../utils/Dev'
 import Config from '../utils/Config'
 import Minecraft from '../minecraft'
 import Chat from '../structs/Chat'
+import createLogger from '../structs/Logger'
 
 export default class Discord {
   private readonly client: Client<true>
+  public readonly logClass = createLogger(this)
   public minecraft: Minecraft
   public readonly config: Config
   public commands = new Map<string, Command>()
@@ -30,7 +32,6 @@ export default class Discord {
     return new Promise(async (res, rej) => {
       const client = new Client({ intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildWebhooks'] })
 
-      console.log('Logging into discord')
       client.login(config.token).catch(err => {
         console.error(err)
         rej(err)
@@ -43,7 +44,7 @@ export default class Discord {
         await discord.loadCommands()
         await discord.publishCommands()
 
-        console.log(`Discord client ready, logged in as ${client.user.tag}`)
+        discord.logClass.sendSingleLog('discord', `Ready, logged in as \`${client.user.tag}\``)
         res(discord)
       })
     })
@@ -56,7 +57,7 @@ export default class Discord {
       this.client[event.once ? 'once' : 'on'](event.name, (...args) => event.execute(this, ...args))
       c++
     }
-    console.log(`${c} Discord events loaded`)
+    this.logClass.sendSingleLog('discord', `\`${c}\` events loaded`)
   }
 
   public async loadCommands() {
@@ -69,7 +70,7 @@ export default class Discord {
       this.commands.set(command.name, command)
       c++
     }
-    console.log(`${c} Discord commands loaded`)
+    this.logClass.sendSingleLog('discord', `\`${c}\` commands loaded`)
     return c
   }
 
@@ -82,8 +83,8 @@ export default class Discord {
     }
   }
 
-  private async sendToChannel(content: MessageOptions, destination: Chat) {
-    const channel = this.client.channels.cache.get(this.config.channels[destination]) ?? (await this.client.channels.fetch(this.config.channels[destination]))
+  private async sendToChannel(content: MessageOptions, destination: string) {
+    const channel = this.client.channels.cache.get(destination) ?? (await this.client.channels.fetch(destination))
 
     if (channel?.isTextBased()) {
       return await channel.send({ ...content, ...{ allowedMentions: { parse: [] } } })
@@ -91,14 +92,23 @@ export default class Discord {
   }
 
   public async sendChatMessage({ username, message }: { username: string; message: string }, destination: Chat) {
-    return this.sendToChannel({ content: `${username}: ${message}` }, destination)
+    return this.sendToChannel({ content: `${username}: ${message}` }, this.config.channels[destination])
   }
 
   public async sendEmbed(embed: APIEmbed, destination: Chat | 'both') {
     if (destination == 'both') {
-      return await Promise.all([this.sendToChannel({ embeds: [embed] }, 'guild'), this.sendToChannel({ embeds: [embed] }, 'officer')])
+      return await Promise.all([
+        this.sendToChannel({ embeds: [embed] }, this.config.channels['guild']),
+        this.sendToChannel({ embeds: [embed] }, this.config.channels['officer'])
+      ])
     }
 
-    return await this.sendToChannel({ embeds: [embed] }, destination)
+    return await this.sendToChannel({ embeds: [embed] }, this.config.channels[destination])
+  }
+
+  public async sendLog(embeds: APIEmbed[]) {
+    if (this.config.logChannel) {
+      this.sendToChannel({ embeds }, this.config.logChannel)
+    }
   }
 }
