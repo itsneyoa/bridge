@@ -10,11 +10,7 @@ export default interface DiscordCommand extends ChatInputApplicationCommandData 
 
 export async function reply(interaction: ChatInputCommandInteraction, embed: APIEmbed, ephemeral = false) {
   if (interaction.isRepliable()) {
-    try {
-      return await interaction[interaction.replied ? 'editReply' : 'reply']({ embeds: [embed], ephemeral, allowedMentions: { parse: [] } })
-    } catch (err) {
-      console.error(err)
-    }
+    return await interaction[interaction.replied ? 'editReply' : 'reply']({ embeds: [embed], ephemeral, allowedMentions: { parse: [] } })
   }
 }
 

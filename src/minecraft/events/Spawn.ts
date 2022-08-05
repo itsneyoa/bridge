@@ -3,7 +3,7 @@ import { FullEmbed } from '../../utils/Embed'
 
 const Spawn: Event<'spawn'> = {
   name: 'spawn',
-  once: true,
+  once: false,
 
   async execute(minecraft) {
     minecraft.loggedIn = true

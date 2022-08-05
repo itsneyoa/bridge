@@ -1,4 +1,4 @@
-import { Channel, Message } from 'discord.js'
+import { Message } from 'discord.js'
 import Discord from '..'
 import Chat from '../../structs/Chat'
 import Event from '../../structs/DiscordEvent'

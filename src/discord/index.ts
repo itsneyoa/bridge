@@ -11,7 +11,7 @@ import createLogger from '../structs/Logger'
 
 export default class Discord {
   private readonly client: Client<true>
-  public readonly logClass = createLogger(this)
+  public readonly log = createLogger(this)
   public minecraft: Minecraft
   public readonly config: Config
   public commands = new Map<string, Command>()
@@ -44,7 +44,7 @@ export default class Discord {
         await discord.loadCommands()
         await discord.publishCommands()
 
-        discord.logClass.sendSingleLog('discord', `Ready, logged in as \`${client.user.tag}\``)
+        discord.log.sendSingleLog('discord', `Ready, logged in as \`${client.user.tag}\``)
         res(discord)
       })
     })
@@ -57,7 +57,7 @@ export default class Discord {
       this.client[event.once ? 'once' : 'on'](event.name, (...args) => event.execute(this, ...args))
       c++
     }
-    this.logClass.sendSingleLog('discord', `\`${c}\` events loaded`)
+    this.log.sendSingleLog('discord', `\`${c}\` events loaded`)
   }
 
   public async loadCommands() {
@@ -70,7 +70,7 @@ export default class Discord {
       this.commands.set(command.name, command)
       c++
     }
-    this.logClass.sendSingleLog('discord', `\`${c}\` commands loaded`)
+    this.log.sendSingleLog('discord', `\`${c}\` commands loaded`)
     return c
   }
 
@@ -87,7 +87,7 @@ export default class Discord {
     const channel = this.client.channels.cache.get(destination) ?? (await this.client.channels.fetch(destination))
 
     if (channel?.isTextBased()) {
-      return await channel.send({ ...content, ...{ allowedMentions: { parse: [] } } })
+      return await channel.send({ ...content, ...{ allowedMentions: { parse: [] } } }).catch(reason => this.log.sendErrorLog(reason))
     }
   }
 

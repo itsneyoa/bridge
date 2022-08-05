@@ -50,13 +50,13 @@ export default class Minecraft {
       bot[event.once ? 'once' : 'on'](event.name, (...args: any) => event.execute(this, ...args))
       c++
     }
-    this.discord.logClass.sendSingleLog('minecraft', `\`${c}\` events loaded`)
+    this.discord.log.sendSingleLog('minecraft', `\`${c}\` events loaded`)
   }
 
   public refreshBot() {
     const delay = this.relogAttempts < 24 ? ++this.relogAttempts * 5 : 24
 
-    this.discord.logClass.sendSingleLog('minecraft', `Disconnected from the server! Relogging in \`${delay}\` seconds.`)
+    this.discord.log.sendSingleLog('minecraft', `Disconnected from the server! Relogging in \`${delay}\` seconds.`)
 
     if (this.lastStatusMessage == 'login') {
       this.lastStatusMessage = 'logout'

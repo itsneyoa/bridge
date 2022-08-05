@@ -53,6 +53,11 @@ export default function createLogger(discord: Discord) {
       console.log(this.stringify({ type, message }))
       this.discord.sendLog([this.buildEmbed({ type, message })])
     }
+
+    public static sendErrorLog(error: Error) {
+      console.error(error)
+      this.discord.sendLog([this.buildEmbed({ type: 'error', message: [`**${error.name}**`, error.message].join('\n') })])
+    }
   }
 }
 
@@ -83,5 +88,9 @@ const LogTypes = {
   info: {
     title: 'Info',
     color: 0xff1493
+  },
+  error: {
+    title: 'Error',
+    color: 0xf04a47
   }
 }

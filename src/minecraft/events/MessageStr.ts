@@ -5,7 +5,7 @@ const MessageStr: Event<'messagestr'> = {
   once: false,
 
   async execute(minecraft, message, position, json) {
-    const log = minecraft.discord.logClass.create('chat', message)
+    const log = minecraft.discord.log.create('chat', message)
 
     try {
       const match = message.match(/^(Guild|Officer) > (?:\[.+?\] )?(\w+?)(?: \[.+?\])?: (.+)$/)

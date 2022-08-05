@@ -47,7 +47,11 @@ const InteractionCreate: Event<'interactionCreate'> = {
     try {
       return await command.execute(interaction, discord)
     } catch (error) {
-      console.error(error)
+      if (error instanceof Error) {
+        discord.log.sendErrorLog(error)
+      } else {
+        discord.log.sendSingleLog('error', String(error))
+      }
       return reply(interaction, SimpleEmbed('failure', `Something went wrong while trying to run that`))
     }
   }
