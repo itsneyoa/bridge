@@ -23,14 +23,16 @@ const InteractionCreate: Event<'interactionCreate'> = {
           !(interaction.member?.roles instanceof GuildMemberRoleManager
             ? interaction.member?.roles.cache.has(discord.config.staffRole)
             : interaction.member?.roles.includes(discord.config.staffRole))
-        )
+        ) {
           return reply(
             interaction,
             SimpleEmbed('failure', [`You don't have permission to do that.`, `Required permission: <@&${discord.config.staffRole}>`].join('\n')),
             true
           )
+        }
+        break
       case 'owner':
-        if (interaction.user.id != process.env['OWNER_ID'])
+        if (interaction.user.id != process.env['OWNER_ID']) {
           return reply(
             interaction,
             SimpleEmbed(
@@ -42,6 +44,8 @@ const InteractionCreate: Event<'interactionCreate'> = {
             ),
             true
           )
+        }
+        break
     }
 
     try {

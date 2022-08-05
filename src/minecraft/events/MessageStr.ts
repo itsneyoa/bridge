@@ -4,7 +4,7 @@ const MessageStr: Event<'messagestr'> = {
   name: 'messagestr',
   once: false,
 
-  async execute(minecraft, message, position, json) {
+  async execute(minecraft, message /*, position, json*/) {
     const log = minecraft.discord.log.create('chat', message)
 
     try {

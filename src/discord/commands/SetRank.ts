@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 import DiscordCommand, { execute, reply } from '../../structs/DiscordCommand'
-import {SimpleEmbed} from '../../utils/Embed'
+import { SimpleEmbed } from '../../utils/Embed'
 
 const SetRank: DiscordCommand = {
   name: 'setrank',

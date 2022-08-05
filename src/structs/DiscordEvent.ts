@@ -5,5 +5,5 @@ export default interface DiscordEvent<K extends keyof ClientEvents> {
   name: K
   once: boolean
 
-  execute(discord: Discord, ...args: ClientEvents[K]): Promise<any>
+  execute(discord: Discord, ...args: ClientEvents[K]): Promise<unknown>
 }

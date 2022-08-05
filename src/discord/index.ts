@@ -1,7 +1,6 @@
 import { APIEmbed, Client, MessageOptions } from 'discord.js'
 import { readdirSync } from 'fs'
 import { join } from 'path'
-import Event from '../structs/DiscordEvent'
 import Command from '../structs/DiscordCommand'
 import Dev from '../utils/Dev'
 import Config from '../utils/Config'
@@ -29,7 +28,7 @@ export default class Discord {
   public static async create(): Promise<Discord> {
     const config = new Config()
 
-    return new Promise(async (res, rej) => {
+    return new Promise((res, rej) => {
       const client = new Client({ intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildWebhooks'] })
 
       client.login(config.token).catch(err => {
@@ -53,7 +52,7 @@ export default class Discord {
   private async registerEvents() {
     let c = 0
     for (const path of readdirSync(join(__dirname, 'events')).map(fileName => join(__dirname, 'events', fileName))) {
-      const event: Event<any> = (await import(path)).default
+      const event = (await import(path)).default
       this.client[event.once ? 'once' : 'on'](event.name, (...args) => event.execute(this, ...args))
       c++
     }
