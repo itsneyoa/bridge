@@ -1,4 +1,4 @@
-import { GuildMemberRoleManager } from 'discord.js'
+import { GuildMemberRoleManager, inlineCode } from 'discord.js'
 import { reply } from '../../structs/DiscordCommand'
 import Event from '../../structs/DiscordEvent'
 import { SimpleEmbed } from '../../utils/Embed'
@@ -14,7 +14,7 @@ const InteractionCreate: Event<'interactionCreate'> = {
 
     if (!command) {
       console.error(`Command ${interaction.commandName} called but implementation not found`)
-      return reply(interaction, SimpleEmbed('failure', `Command \`${interaction.commandName}\` could not be found`), true)
+      return reply(interaction, SimpleEmbed('failure', `Command ${inlineCode(interaction.commandName)} could not be found`), true)
     }
 
     switch (command.permission) {

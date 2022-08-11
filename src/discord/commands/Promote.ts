@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { execute, reply } from '../../structs/DiscordCommand'
 import { SimpleEmbed } from '../../utils/Embed'
 
@@ -25,7 +25,7 @@ const Promote: DiscordCommand = {
 
     const command = `/g promote ${user}`
 
-    if (execute(command, discord.minecraft, interaction)) reply(interaction, SimpleEmbed('success', `Running \`${command}\``))
+    if (execute(command, discord.minecraft, interaction)) reply(interaction, SimpleEmbed('success', `Running ${inlineCode(command)}`))
   }
 }
 

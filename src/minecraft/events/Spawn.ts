@@ -1,3 +1,4 @@
+import { inlineCode } from 'discord.js'
 import Event from '../../structs/MinecraftEvent'
 import { FullEmbed } from '../../utils/Embed'
 
@@ -16,7 +17,7 @@ const Spawn: Event<'spawn'> = {
           author: {
             name: 'Chat Bridge is Online'
           },
-          description: `Connected as \`${minecraft.username}\` on version \`${minecraft.version}\``
+          description: `Connected as ${inlineCode(minecraft.username)} on version ${inlineCode(minecraft.version)}`
         }),
         'both'
       )

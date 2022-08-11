@@ -1,4 +1,4 @@
-import { APIEmbed, Client, MessageOptions } from 'discord.js'
+import { APIEmbed, Client, MessageOptions, inlineCode } from 'discord.js'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import Command from '../structs/DiscordCommand'
@@ -43,7 +43,7 @@ export default class Discord {
         await discord.loadCommands()
         await discord.publishCommands()
 
-        discord.log.sendSingleLog('info', `Discord client ready, logged in as \`${client.user.tag}\``)
+        discord.log.sendSingleLog('info', `Discord client ready, logged in as ${inlineCode(client.user.tag)}`)
         discord.log.sendDemoLogs()
         res(discord)
       })
@@ -57,7 +57,7 @@ export default class Discord {
       this.client[event.once ? 'once' : 'on'](event.name, (...args) => event.execute(this, ...args))
       c++
     }
-    this.log.sendSingleLog('info', `\`${c}\` Discord events loaded`)
+    this.log.sendSingleLog('info', `${inlineCode(c.toString())} Discord events loaded`)
   }
 
   public async loadCommands() {
@@ -70,7 +70,7 @@ export default class Discord {
       this.commands.set(command.name, command)
       c++
     }
-    this.log.sendSingleLog('info', `\`${c}\` Discord commands loaded`)
+    this.log.sendSingleLog('info', `${inlineCode(c.toString())} Discord commands loaded`)
     return c
   }
 

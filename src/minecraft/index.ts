@@ -4,6 +4,7 @@ import Dev from '../utils/Dev'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import { FullEmbed } from '../utils/Embed'
+import { inlineCode } from 'discord.js'
 
 export default class Minecraft {
   public readonly discord: Discord
@@ -49,13 +50,13 @@ export default class Minecraft {
       bot[event.once ? 'once' : 'on'](event.name, (...args: never[]) => event.execute(this, ...args))
       c++
     }
-    this.discord.log.sendSingleLog('info', `\`${c}\` Minecraft events loaded`)
+    this.discord.log.sendSingleLog('info', `${inlineCode(c.toString())} Minecraft events loaded`)
   }
 
   public refreshBot() {
     const delay = this.relogAttempts < 24 ? ++this.relogAttempts * 5 : 24
 
-    this.discord.log.sendSingleLog('info', `Minecraft bot disconnected from the server! Relogging in \`${delay}\` seconds.`)
+    this.discord.log.sendSingleLog('info', `Minecraft bot disconnected from the server! Relogging in ${inlineCode(delay.toString())} seconds.`)
 
     if (this.lastStatusMessage == 'login') {
       this.lastStatusMessage = 'logout'
@@ -86,7 +87,7 @@ export default class Minecraft {
       command = command.slice(0, 256)
     }
 
-    log?.add('command', `\`${command}\``)
+    log?.add('command', `${inlineCode(command)}`)
 
     return this.bot.chat(command)
   }

@@ -1,7 +1,8 @@
 import Minecraft from '..'
 import Chat from '../../structs/Chat'
 import Event from '../../structs/MinecraftEvent'
-import { FullEmbed, SimpleEmbed } from '../../utils/Embed'
+import { FullEmbed, SimpleEmbed, headUrl } from '../../utils/Embed'
+import { inlineCode } from 'discord.js'
 
 const MessageStr: Event<'messagestr'> = {
   name: 'messagestr',
@@ -33,7 +34,7 @@ const messages: Array<(message: string, minecraft: Minecraft, log: ReturnType<ty
         log.add('info', `Minecraft bot successfully sent to limbo`)
       } else {
         minecraft.execute('/ac §')
-        log.add('info', [`Lobby detected, sending to limbo`, ...Object.entries(json).map(([key, value]) => `${key}: \`${value}\``)].join('\n'))
+        log.add('info', [`Lobby detected, sending to limbo`, ...Object.entries(json).map(([key, value]) => `${key}: ${inlineCode(String(value))}`)].join('\n'))
       }
       return true
     } catch {
@@ -111,7 +112,7 @@ const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log
   [
     /^(?:\[.+?\] )?(\w+) joined the guild!$/,
     ([, user], minecraft, log) => {
-      const description = `${codeBlock(user)} joined the guild`
+      const description = `${inlineCode(user)} joined the guild`
       log.add('event', description)
       return minecraft.discord.sendEmbed(FullEmbed('success', { description, author: { name: `Member Joined!`, icon_url: headUrl(user) } }), 'both')
     }
@@ -121,7 +122,7 @@ const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log
   [
     /^(?:\[.+?\] )?(\w+) left the guild!$/,
     ([, user], minecraft, log) => {
-      const description = `${codeBlock(user)} left the guild`
+      const description = `${inlineCode(user)} left the guild`
       log.add('event', description)
       return minecraft.discord.sendEmbed(FullEmbed('failure', { description, author: { name: `Member Left!`, icon_url: headUrl(user) } }), 'both')
     }
@@ -131,8 +132,8 @@ const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log
   [
     /^(?:\[.+?\] )?(\w+) was kicked from the guild by (?:\[.+?\] )?(\w+)!$/,
     ([, user, by], minecraft, log) => {
-      const baseDescription = `${codeBlock(user)} was kicked from the guild`
-      const fullDescription = [baseDescription, `by ${codeBlock(by)}`].join(' ')
+      const baseDescription = `${inlineCode(user)} was kicked from the guild`
+      const fullDescription = [baseDescription, `by ${inlineCode(by)}`].join(' ')
       log.add('event', fullDescription)
       return Promise.all(
         (['guild', 'officer'] as Chat[]).map(chat =>
@@ -152,7 +153,7 @@ const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log
   [
     /^(?:\[.+?\] )?(\w+) was promoted from (.+) to (.+)$/,
     ([, user, from, to], minecraft, log) => {
-      const description = `${codeBlock(user)} was promoted from ${codeBlock(from)} to ${codeBlock(to)}`
+      const description = `${inlineCode(user)} was promoted from ${inlineCode(from)} to ${inlineCode(to)}`
       log.add('event', description)
       return minecraft.discord.sendEmbed(FullEmbed('success', { description }), 'both')
     }
@@ -162,7 +163,7 @@ const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log
   [
     /^(?:\[.+?\] )?(\w+) was demoted from (.+) to (.+)$/,
     ([, user, from, to], minecraft, log) => {
-      const description = `${codeBlock(user)} was demoted from ${codeBlock(from)} to ${codeBlock(to)}`
+      const description = `${inlineCode(user)} was demoted from ${inlineCode(from)} to ${inlineCode(to)}`
       log.add('event', description)
       return minecraft.discord.sendEmbed(FullEmbed('failure', { description }), 'both')
     }
@@ -172,7 +173,7 @@ const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log
   [
     /^(?:\[.+?\] )?(\w+) has muted (?:\[.+?\] )?(\w+) for (\w+)$/,
     ([, by, user, time], minecraft, log) => {
-      const description = `${codeBlock(user)} has been muted for ${codeBlock(time)} by ${codeBlock(by)}`
+      const description = `${inlineCode(user)} has been muted for ${inlineCode(time)} by ${inlineCode(by)}`
       log.add('event', description)
       return minecraft.discord.sendEmbed(FullEmbed('failure', { description }), 'officer')
     }
@@ -182,7 +183,7 @@ const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log
   [
     /^(?:\[.+?\] )?(\w+) has unmuted (?:\[.+?\] )?(\w+)$/,
     ([, by, user], minecraft, log) => {
-      const description = `${codeBlock(user)} has been unmuted by ${codeBlock(by)}`
+      const description = `${inlineCode(user)} has been unmuted by ${inlineCode(by)}`
       log.add('event', description)
       return minecraft.discord.sendEmbed(FullEmbed('success', { description }), 'officer')
     }
@@ -192,8 +193,8 @@ const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log
   [
     /^(?:\[.+?\] )?(\w+) has muted the guild chat for (\w+)$/,
     ([, by, time], minecraft, log) => {
-      const baseDescription = `Guild Chat has been muted for ${codeBlock(time)}`
-      const fullDescription = [baseDescription, `by ${codeBlock(by)}`].join(' ')
+      const baseDescription = `Guild Chat has been muted for ${inlineCode(time)}`
+      const fullDescription = [baseDescription, `by ${inlineCode(by)}`].join(' ')
       log.add('event', fullDescription)
       return Promise.all(
         (['guild', 'officer'] as Chat[]).map(chat =>
@@ -208,7 +209,7 @@ const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log
     /^(?:\[.+?\] )?(\w+) has unmuted the guild chat!$/,
     ([, by], minecraft, log) => {
       const baseDescription = `Guild Chat has been unmuted`
-      const fullDescription = [baseDescription, `by ${codeBlock(by)}`].join(' ')
+      const fullDescription = [baseDescription, `by ${inlineCode(by)}`].join(' ')
       log.add('event', fullDescription)
       return Promise.all(
         (['guild', 'officer'] as Chat[]).map(chat =>
@@ -218,13 +219,5 @@ const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log
     }
   ]
 ]
-
-function headUrl(username: string) {
-  return `https://mc-heads.net/avatar/${username}/512`
-}
-
-function codeBlock(string: string) {
-  return '`' + string + '`'
-}
 
 export default MessageStr

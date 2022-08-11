@@ -1,3 +1,4 @@
+import { inlineCode } from 'discord.js'
 import DiscordCommand, { reply } from '../../structs/DiscordCommand'
 import { SimpleEmbed } from '../../utils/Embed'
 
@@ -11,7 +12,7 @@ const Reload: DiscordCommand = {
     const commands = await discord.loadCommands()
     await discord.publishCommands()
 
-    reply(interaction, SimpleEmbed('success', `\`${commands}\` commands reloaded`))
+    reply(interaction, SimpleEmbed('success', `${inlineCode(commands.toString())} commands reloaded`))
   }
 }
 

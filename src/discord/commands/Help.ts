@@ -1,5 +1,6 @@
-import { APIEmbed } from 'discord.js'
+import { APIEmbed, inlineCode } from 'discord.js'
 import DiscordCommand, { reply } from '../../structs/DiscordCommand'
+import { headUrl } from '../../utils/Embed'
 
 const Help: DiscordCommand = {
   name: 'help',
@@ -10,7 +11,7 @@ const Help: DiscordCommand = {
   async execute(interaction, discord) {
     const discordCommands = [...discord.commands.values()]
       .sort()
-      .map(command => `\`${command.name}\`: ${command.description}`)
+      .map(command => `${inlineCode(command.name)}: ${command.description}`)
       .join('\n')
 
     // const minecraftCommands =
@@ -35,14 +36,14 @@ const Help: DiscordCommand = {
             `Guild Channel: <#${discord.config.channels.guild}>`,
             `Officer Channel: <#${discord.config.channels.officer}>`,
             `Staff Role: <@&${discord.config.staffRole}>`,
-            `Version: \`${process.env['npm_package_version'] ?? 'Unknown'}\``
+            `Version: ${inlineCode(process.env['npm_package_version'] ?? 'Unknown')}`
           ].join('\n')
         }
       ],
       color: interaction.guild?.members.me?.displayColor,
       footer: {
         text: 'Created by neyoa#1572',
-        icon_url: 'https://mc-heads.net/avatar/neyoa'
+        icon_url: headUrl('neyoa')
       }
     }
 
