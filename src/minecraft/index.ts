@@ -49,13 +49,13 @@ export default class Minecraft {
       bot[event.once ? 'once' : 'on'](event.name, (...args: never[]) => event.execute(this, ...args))
       c++
     }
-    this.discord.log.sendSingleLog('minecraft', `\`${c}\` events loaded`)
+    this.discord.log.sendSingleLog('info', `\`${c}\` Minecraft events loaded`)
   }
 
   public refreshBot() {
     const delay = this.relogAttempts < 24 ? ++this.relogAttempts * 5 : 24
 
-    this.discord.log.sendSingleLog('minecraft', `Disconnected from the server! Relogging in \`${delay}\` seconds.`)
+    this.discord.log.sendSingleLog('info', `Minecraft bot disconnected from the server! Relogging in \`${delay}\` seconds.`)
 
     if (this.lastStatusMessage == 'login') {
       this.lastStatusMessage = 'logout'
@@ -75,17 +75,18 @@ export default class Minecraft {
     }, delay * 1000)
   }
 
-  public execute(command: string) {
+  public execute(command: string, log?: ReturnType<typeof this.discord.log.create>) {
     command = command.trim()
     if (!command.startsWith('/')) {
       command = '/' + command
-      console.warn(`Command "${command}" ran without leading slash`)
     }
 
     if (command.length > 256) {
-      console.warn(`Command ${command} length is greater than 256, truncating`)
+      this.discord.log.sendErrorLog(Error(`Command ${command} length is greater than 256, truncating`))
       command = command.slice(0, 256)
     }
+
+    log?.add('command', `\`${command}\``)
 
     return this.bot.chat(command)
   }

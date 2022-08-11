@@ -21,6 +21,8 @@ const Spawn: Event<'spawn'> = {
         'both'
       )
     }
+
+    return minecraft.execute('/locraw')
   }
 }
 

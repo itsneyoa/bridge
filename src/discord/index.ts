@@ -43,7 +43,8 @@ export default class Discord {
         await discord.loadCommands()
         await discord.publishCommands()
 
-        discord.log.sendSingleLog('discord', `Ready, logged in as \`${client.user.tag}\``)
+        discord.log.sendSingleLog('info', `Discord client ready, logged in as \`${client.user.tag}\``)
+        discord.log.sendDemoLogs()
         res(discord)
       })
     })
@@ -56,7 +57,7 @@ export default class Discord {
       this.client[event.once ? 'once' : 'on'](event.name, (...args) => event.execute(this, ...args))
       c++
     }
-    this.log.sendSingleLog('discord', `\`${c}\` events loaded`)
+    this.log.sendSingleLog('info', `\`${c}\` Discord events loaded`)
   }
 
   public async loadCommands() {
@@ -69,7 +70,7 @@ export default class Discord {
       this.commands.set(command.name, command)
       c++
     }
-    this.log.sendSingleLog('discord', `\`${c}\` commands loaded`)
+    this.log.sendSingleLog('info', `\`${c}\` Discord commands loaded`)
     return c
   }
 

@@ -58,6 +58,18 @@ export default function createLogger(discord: Discord) {
       console.error(error)
       this.discord.sendLog([this.buildEmbed({ type: 'error', message: [`**${error.name}**`, error.message].join('\n') })])
     }
+
+    public static sendDemoLogs() {
+      this.discord.sendLog(
+        Object.values(LogTypes).map(({ title, color }) => {
+          return {
+            color,
+            author: { name: title },
+            description: 'Demo Log!'
+          }
+        })
+      )
+    }
   }
 }
 
@@ -71,19 +83,11 @@ type LogType = keyof typeof LogTypes
 const LogTypes = {
   chat: {
     title: 'Chat Message',
-    color: 0xffffff
+    color: 0x55ff55
   },
   command: {
     title: 'Command Run',
     color: 0x7fffd4
-  },
-  minecraft: {
-    title: 'Minecraft Client',
-    color: 0x55ff55
-  },
-  discord: {
-    title: 'Discord Client',
-    color: 0x5865f2
   },
   info: {
     title: 'Info',
@@ -92,5 +96,9 @@ const LogTypes = {
   error: {
     title: 'Error',
     color: 0xf04a47
+  },
+  event: {
+    title: 'Event',
+    color: 0x5865f2
   }
 }
