@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
-import DiscordCommand, { execute, reply } from '../../structs/DiscordCommand'
+import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
+import { noPermission, notInGuild, playerNotFound } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Unmute: DiscordCommand = {
@@ -17,15 +18,44 @@ const Unmute: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
-  async execute(interaction, discord) {
+  async execute(interaction, discord, log) {
     const user = interaction.options.getString('username')
 
-    if (!user) return reply(interaction, SimpleEmbed('failure', 'User argument not found'))
-    if (user.match(/\s/g)) return reply(interaction, SimpleEmbed('failure', 'User argument cannot contain spaces'))
+    if (!user) return interaction.reply({ embeds: [SimpleEmbed('failure', 'User argument not found')] })
+    if (user.match(/\s/g)) return interaction.reply({ embeds: [SimpleEmbed('failure', 'User argument cannot contain spaces')] })
 
     const command = `/g unmute ${user}`
 
-    if (execute(command, discord.minecraft, interaction)) reply(interaction, SimpleEmbed('success', `Running ${inlineCode(command)}`))
+    return discord.minecraft.execute(
+      {
+        command,
+        regex: [
+          {
+            exp: RegExp(`^(?:\\[.+?\\] )?(?:${discord.minecraft.username}) has unmuted (?:\\[.+?\\] )?(${user})$`, 'i'),
+            exec: ([, username]) =>
+              interaction.editReply({
+                embeds: [SimpleEmbed('success', `${inlineCode(username)} has been unmuted`)]
+              })
+          },
+          {
+            exp: RegExp(`^(?:\\[.+?\\] )?(${discord.minecraft.username}) has unmuted the guild chat!$`),
+            exec: () =>
+              interaction.editReply({
+                embeds: [SimpleEmbed('success', `Guild chat has been unmuted`)]
+              })
+          },
+          notInGuild(interaction),
+          playerNotFound(interaction, user),
+          {
+            exp: /^This player is not muted!$/,
+            exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(user)} is not muted`)] })
+          },
+          noPermission(interaction)
+        ],
+        noResponse: noResponse(interaction)
+      },
+      log
+    )
   }
 }
 

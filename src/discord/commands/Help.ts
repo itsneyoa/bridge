@@ -1,5 +1,5 @@
 import { APIEmbed, inlineCode } from 'discord.js'
-import DiscordCommand, { reply } from '../../structs/DiscordCommand'
+import DiscordCommand from '../../structs/DiscordCommand'
 import { headUrl } from '../../utils/Embed'
 
 const Help: DiscordCommand = {
@@ -47,7 +47,7 @@ const Help: DiscordCommand = {
       }
     }
 
-    return reply(interaction, embed)
+    return interaction.editReply({ embeds: [embed] })
   }
 }
 

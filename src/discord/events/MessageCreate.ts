@@ -1,4 +1,4 @@
-import { Message } from 'discord.js'
+import { inlineCode, Message } from 'discord.js'
 import Discord from '..'
 import Chat from '../../structs/Chat'
 import Event from '../../structs/DiscordEvent'
@@ -16,6 +16,7 @@ const InteractionCreate: Event<'messageCreate'> = {
     switch (message.channelId) {
       case discord.config.channels.guild:
         return handleMessage(discord, message, 'guild')
+
       case discord.config.channels.officer:
         return handleMessage(discord, message, 'officer')
     }
@@ -29,17 +30,45 @@ function handleMessage(discord: Discord, message: Message, chat: Chat) {
   const invalidContent = containsInvalidCharacters(content)
   const invalidPrefix = containsInvalidCharacters(prefix)
 
-  if (invalidContent) content = cleanString(content)
+  const log = discord.log.create('chat', `${inlineCode(prefix)}: ${inlineCode(content)}`)
 
-  if (!content) return message.react(Styles.warnings.emptyMessage.emoji)
+  try {
+    if (invalidContent) content = cleanString(content)
 
-  if (invalidPrefix) prefix = cleanString(prefix)
+    if (!content) {
+      log.add('chat', 'Message had no content after clearning')
+      return message.react(Styles.warnings.emptyMessage.emoji)
+    }
+    if (invalidPrefix) prefix = cleanString(prefix)
 
-  if (!prefix) prefix = 'Unknown'
+    if (!prefix) prefix = 'Unknown'
 
-  if (invalidContent || invalidPrefix) message.react(Styles.warnings.invalidMessage.emoji)
+    if (invalidContent || invalidPrefix) message.react(Styles.warnings.invalidMessage.emoji)
 
-  return discord.minecraft.execute(`${commands[chat]} ${prefix}: ${content}`)
+    return discord.minecraft.execute(
+      {
+        command: `${commands[chat]} ${prefix}: ${content}`,
+        regex: [
+          {
+            exp: RegExp(`^Guild > (?:\\[.+?\\] )?${discord.minecraft.username}(?: \\[.+?\\])?: ${prefix}: .*`),
+            exec: () => undefined
+          },
+          {
+            exp: /^You cannot say the same message twice!$/,
+            exec: () => message.react(Styles.warnings.repeatMessage.emoji)
+          },
+          {
+            exp: /^We blocked your comment ".+"/,
+            exec: () => message.react(Styles.warnings.blocked.emoji)
+          }
+        ],
+        noResponse: () => message.react(Styles.warnings.timedOut.emoji)
+      },
+      log
+    )
+  } finally {
+    log.send()
+  }
 }
 
 const commands: { [key in Chat]: `/${string}` } = {

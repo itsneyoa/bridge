@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
-import DiscordCommand, { execute, reply } from '../../structs/DiscordCommand'
+import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
+import { noPermission, notInGuild, playerNotFound } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Kick: DiscordCommand = {
@@ -23,16 +24,35 @@ const Kick: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
-  async execute(interaction, discord) {
+  async execute(interaction, discord, log) {
     const user = interaction.options.getString('username')?.trim()
     const reason = interaction.options.getString('reason') ?? 'No reason specified'
 
-    if (!user) return reply(interaction, SimpleEmbed('failure', 'User argument not found'))
-    if (user.match(/\s/g)) return reply(interaction, SimpleEmbed('failure', 'User argument cannot contain spaces'))
+    if (!user) return interaction.reply({ embeds: [SimpleEmbed('failure', 'User argument not found')] })
+    if (user.match(/\s/g)) return interaction.reply({ embeds: [SimpleEmbed('failure', 'User argument cannot contain spaces')] })
 
     const command = `/g kick ${user} ${reason}`
 
-    if (execute(command, discord.minecraft, interaction)) reply(interaction, SimpleEmbed('success', `Running ${inlineCode(command)}`))
+    return discord.minecraft.execute(
+      {
+        command,
+        regex: [
+          {
+            exp: RegExp(`^(?:\\[.+?\\] )?(${user}) was kicked from the guild by (?:\\[.+?\\] )?(${discord.minecraft.username})!$`, 'i'),
+            exec: ([, username]) => interaction.editReply({ embeds: [SimpleEmbed('success', `${inlineCode(username)} was kicked from the guild`)] })
+          },
+          notInGuild(interaction),
+          playerNotFound(interaction, user),
+          noPermission(interaction),
+          {
+            exp: RegExp(`^Invalid usage! '\\/guild kick <player> <reason>'$`),
+            exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', 'Missing reason')] })
+          }
+        ],
+        noResponse: noResponse(interaction)
+      },
+      log
+    )
   }
 }
 

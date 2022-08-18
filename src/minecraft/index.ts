@@ -5,9 +5,12 @@ import { readdirSync } from 'fs'
 import { join } from 'path'
 import { FullEmbed } from '../utils/Embed'
 import { inlineCode } from 'discord.js'
+import { setTimeout as sleep } from 'timers/promises'
 
 export default class Minecraft {
   public readonly discord: Discord
+  private readonly queue: Array<CommandToRun> = []
+  private looping = false
   private bot: Bot
   public lastStatusMessage: 'logout' | 'login' = 'logout'
   public relogAttempts = 0
@@ -76,19 +79,73 @@ export default class Minecraft {
     }, delay * 1000)
   }
 
-  public execute(command: string, log?: ReturnType<typeof this.discord.log.create>) {
-    command = command.trim()
-    if (!command.startsWith('/')) {
-      command = '/' + command
-    }
+  public execute(fullCommand: CommandToRun, log: ReturnType<typeof this.discord.log.create>) {
+    let command = fullCommand.command.trim()
+    if (!command.startsWith('/')) command = '/' + command
 
     if (command.length > 256) {
-      this.discord.log.sendErrorLog(Error(`Command ${command} length is greater than 256, truncating`))
+      const warningMessage = `Command ${command} length is greater than 256, truncating`
+      log?.add('error', warningMessage) ?? this.discord.log.sendErrorLog(Error(warningMessage))
       command = command.slice(0, 256)
     }
 
-    log?.add('command', `${inlineCode(command)}`)
+    this.queue.push(fullCommand)
+    const logMessage = `${inlineCode(command)} added to command queue - current position: ${inlineCode(this.queue.length.toString())}`
+    log?.add('command', logMessage) ?? this.discord.log.sendSingleLog('command', logMessage)
 
-    return this.bot.chat(command)
+    console.log(this.looping)
+
+    this.loop()
+  }
+
+  public priorityExecute(command: string) {
+    this.queue.unshift({ command })
+    this.loop()
+  }
+
+  public async loop(): Promise<unknown> {
+    if (this.looping) return
+    if (!this.queue.length || !this.loggedIn) return (this.looping = false)
+
+    try {
+      this.looping = true
+
+      const currentCommand = this.queue.shift()
+
+      if (!currentCommand) return
+
+      const { command, regex, noResponse } = currentCommand
+
+      this.discord.log.sendSingleLog('command', `Running ${inlineCode(command)}`)
+      this.bot.chat(command)
+
+      if (regex?.length) {
+        const response = await Promise.race([this.bot.awaitMessage(...regex.map(({ exp }) => exp)), sleep(10 * 1000)]) // Either we get a valid response after 10 seconds or we reject
+
+        if (response) {
+          for (const { exp, exec } of regex) {
+            const match = response.match(exp)
+
+            if (!match) continue
+
+            return exec(match)
+          }
+        } else {
+          if (noResponse) return noResponse()
+        }
+      }
+    } finally {
+      // await sleep(500)
+      this.looping = false
+      this.loop()
+    }
   }
 }
+
+interface CommandToRun {
+  command: string
+  regex?: Array<ChatTrigger>
+  noResponse?: () => unknown,
+}
+
+export type ChatTrigger = { exp: RegExp; exec: (reason: RegExpMatchArray) => unknown }

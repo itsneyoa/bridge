@@ -11,7 +11,8 @@ const MessageStr: Event<'messagestr'> = {
   async execute(minecraft, message /*, position, json*/) {
     const log = minecraft.discord.log.create('chat', message)
 
-    if (message === '-----------------------------------------------------') return
+    message = message.replaceAll(/-/g, '')
+    if (!message) return
 
     try {
       for (const exec of messages) {
@@ -33,7 +34,7 @@ const messages: Array<(message: string, minecraft: Minecraft, log: ReturnType<ty
       if (json['server'] == 'limbo') {
         log.add('info', `Minecraft bot successfully sent to limbo`)
       } else {
-        minecraft.execute('/ac §')
+        minecraft.priorityExecute('/ac §')
         log.add('info', [`Lobby detected, sending to limbo`, ...Object.entries(json).map(([key, value]) => `${key}: ${inlineCode(String(value))}`)].join('\n'))
       }
       return true
@@ -86,25 +87,6 @@ const messages: Array<(message: string, minecraft: Minecraft, log: ReturnType<ty
 
     return false
   }
-
-  // // Errors
-  // (message, minecraft, log) => {
-  //   // Message blocked by hypixel
-  //   // You cannot say the same message twice
-  //   // No permission
-  //   // Incorrect usage
-  //   // Failed invite
-  //   // Setrank fail
-  //   // Player is already muted
-  //   // Player is not muted
-  //   // Player is not in guild
-  //   // Player is already lowest rank
-  //   // Player already has rank
-  //   // You are sending commands too fast
-  //   // Player not found
-
-  //   return false
-  // }
 ]
 
 const events: Array<[RegExp, (match: RegExpMatchArray, minecraft: Minecraft, log: ReturnType<typeof minecraft.discord.log.create>) => Promise<unknown>]> = [

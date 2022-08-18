@@ -16,6 +16,17 @@ export default {
     blocked: {
       emoji: '⛔',
       explanation: `The message was blocked by Hypixel's chat filter`
+    },
+    timedOut: {
+      emoji: '⏱️',
+      explanation: 'The message response search timed out after 10 seconds'
+    },
+    repeatMessage: {
+      emoji: '🔁',
+      explanation: 'You cannot say the same message twice'
     }
+  },
+  characters: {
+    arrow: '➜'
   }
 }

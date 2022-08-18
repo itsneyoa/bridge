@@ -23,7 +23,8 @@ const Spawn: Event<'spawn'> = {
       )
     }
 
-    return minecraft.execute('/locraw')
+    minecraft.priorityExecute('/locraw')
+    return minecraft.loop()
   }
 }
 

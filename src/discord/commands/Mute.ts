@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
-import DiscordCommand, { execute, reply } from '../../structs/DiscordCommand'
+import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
+import { noPermission, notInGuild, playerNotFound } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Mute: DiscordCommand = {
@@ -25,17 +26,58 @@ const Mute: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
-  async execute(interaction, discord) {
+  async execute(interaction, discord, log) {
     const user = interaction.options.getString('username')?.trim()
     const time = interaction.options.getString('time')?.replace(/\s/g, '')
 
-    if (!user) return reply(interaction, SimpleEmbed('failure', 'User argument not found'))
-    if (user.match(/\s/g)) return reply(interaction, SimpleEmbed('failure', 'User argument cannot contain spaces'))
-    if (!time) return reply(interaction, SimpleEmbed('failure', 'Time argument not found'))
+    if (!user) return interaction.reply({ embeds: [SimpleEmbed('failure', 'User argument not found')] })
+    if (user.match(/\s/g)) return interaction.reply({ embeds: [SimpleEmbed('failure', 'User argument cannot contain spaces')] })
+    if (!time) return interaction.reply({ embeds: [SimpleEmbed('failure', 'Time argument not found')] })
 
     const command = `/g mute ${user} ${time}`
 
-    if (execute(command, discord.minecraft, interaction)) reply(interaction, SimpleEmbed('success', `Running ${inlineCode(command)}`))
+    return discord.minecraft.execute(
+      {
+        command,
+        regex: [
+          {
+            exp: RegExp(`^(?:\\[.+?\\] )?(?:${discord.minecraft.username}) has muted (?:\\[.+?\\] )?(${user}) for (\\d+\\w)$`, 'i'),
+            exec: ([, username, time]) =>
+              interaction.editReply({
+                embeds: [SimpleEmbed('success', `${inlineCode(username)} has been muted for ${inlineCode(time)}`)]
+              })
+          },
+          {
+            exp: RegExp(`^(?:\\[.+?\\] )?(?:${discord.minecraft.username}) has muted the guild chat for (\\d+\\w)$`),
+            exec: () =>
+              interaction.editReply({
+                embeds: [SimpleEmbed('success', `Guild chat has been muted for ${inlineCode(time)}`)]
+              })
+          },
+          notInGuild(interaction),
+          playerNotFound(interaction, user),
+          {
+            exp: /^This player is already muted!$/,
+            exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(user)} is already muted`)] })
+          },
+          {
+            exp: /^You cannot mute someone for more than one month$/,
+            exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `Mute length too long`)] })
+          },
+          {
+            exp: /^You cannot mute someone for less than a minute$/,
+            exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `Mute length too short`)] })
+          },
+          noPermission(interaction),
+          {
+            exp: /^Invalid time format! Try 7d, 1d, 6h, 1h$/,
+            exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', 'Invalid mute length given')] })
+          }
+        ],
+        noResponse: noResponse(interaction)
+      },
+      log
+    )
   }
 }
 

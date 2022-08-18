@@ -1,3 +1,4 @@
+import { codeBlock } from 'discord.js'
 import Event from '../../structs/DiscordEvent'
 
 const InteractionCreate: Event<'error'> = {
@@ -6,7 +7,7 @@ const InteractionCreate: Event<'error'> = {
 
   async execute(discord, error) {
     try {
-      discord.log.sendSingleLog('info', `${error.name}: ${error.message}`)
+      discord.log.sendSingleLog('info', `${error.name}: ${codeBlock(error.message)}`)
     } finally {
       console.error(error)
     }

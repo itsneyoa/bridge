@@ -1,5 +1,4 @@
 import { GuildMemberRoleManager, inlineCode } from 'discord.js'
-import { reply } from '../../structs/DiscordCommand'
 import Event from '../../structs/DiscordEvent'
 import { SimpleEmbed } from '../../utils/Embed'
 
@@ -10,53 +9,64 @@ const InteractionCreate: Event<'interactionCreate'> = {
   async execute(discord, interaction) {
     if (!interaction.isChatInputCommand()) return
 
-    const command = discord.commands.get(interaction.commandName)
-
-    if (!command) {
-      console.error(`Command ${interaction.commandName} called but implementation not found`)
-      return reply(interaction, SimpleEmbed('failure', `Command ${inlineCode(interaction.commandName)} could not be found`), true)
-    }
-
-    switch (command.permission) {
-      case 'staff':
-        if (
-          !(interaction.member?.roles instanceof GuildMemberRoleManager
-            ? interaction.member?.roles.cache.has(discord.config.staffRole)
-            : interaction.member?.roles.includes(discord.config.staffRole))
-        ) {
-          return reply(
-            interaction,
-            SimpleEmbed('failure', [`You don't have permission to do that.`, `Required permission: <@&${discord.config.staffRole}>`].join('\n')),
-            true
-          )
-        }
-        break
-      case 'owner':
-        if (interaction.user.id != process.env['OWNER_ID']) {
-          return reply(
-            interaction,
-            SimpleEmbed(
-              'failure',
-              [
-                `You don't have permission to do that.`,
-                process.env['OWNER_ID'] ? `Required permission: <@!${process.env['OWNER_ID']}>` : `Owner ID not set in configuration`
-              ].join('\n')
-            ),
-            true
-          )
-        }
-        break
-    }
+    const log = discord.log.create(
+      'command',
+      [`Command: ${inlineCode(interaction.commandName)}`, `User: ${inlineCode(interaction.user.tag)}`, `Arguments: ${interaction.options.data}`].join('\n')
+    )
 
     try {
-      return await command.execute(interaction, discord)
-    } catch (error) {
-      if (error instanceof Error) {
-        discord.log.sendErrorLog(error)
-      } else {
-        discord.log.sendSingleLog('error', String(error))
+      const command = discord.commands.get(interaction.commandName)
+
+      if (!command) {
+        log.add('error', `Command ${interaction.commandName} called but implementation not found`)
+        return interaction.reply({ embeds: [SimpleEmbed('failure', `Command ${inlineCode(interaction.commandName)} could not be found`)], ephemeral: true })
       }
-      return reply(interaction, SimpleEmbed('failure', `Something went wrong while trying to run that`))
+
+      switch (command.permission) {
+        case 'staff':
+          if (
+            !(interaction.member?.roles instanceof GuildMemberRoleManager
+              ? interaction.member?.roles.cache.has(discord.config.staffRole)
+              : interaction.member?.roles.includes(discord.config.staffRole))
+          ) {
+            return interaction.reply({
+              embeds: [SimpleEmbed('failure', [`You don't have permission to do that.`, `Required permission: <@&${discord.config.staffRole}>`].join('\n'))],
+              ephemeral: true
+            })
+          }
+          break
+        case 'owner':
+          if (interaction.user.id != process.env['OWNER_ID']) {
+            return interaction.reply({
+              embeds: [
+                SimpleEmbed(
+                  'failure',
+                  [
+                    `You don't have permission to do that.`,
+                    process.env['OWNER_ID'] ? `Required permission: <@!${process.env['OWNER_ID']}>` : `Owner ID not set in configuration`
+                  ].join('\n')
+                )
+              ],
+              ephemeral: true
+            })
+          }
+          break
+      }
+
+      await interaction.deferReply()
+
+      try {
+        return await command.execute(interaction, discord, log)
+      } catch (error) {
+        if (error instanceof Error) {
+          log.add('error', [error.name, error.stack].join('\n'))
+        } else {
+          log.add('error', String(error))
+        }
+        return interaction.reply({ embeds: [SimpleEmbed('failure', `Something went wrong while trying to run that`)], ephemeral: true })
+      }
+    } finally {
+      log.send()
     }
   }
 }
