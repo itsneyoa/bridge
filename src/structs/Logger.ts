@@ -1,4 +1,4 @@
-import { APIEmbed } from 'discord.js'
+import { APIEmbed, EmbedField } from 'discord.js'
 import Bridge from './Bridge'
 
 export default function createLogger(bridge: Bridge) {
@@ -10,12 +10,12 @@ export default function createLogger(bridge: Bridge) {
       this.logs.unshift(startingLog)
     }
 
-    public static create(type: LogType, message: string) {
-      return new this({ type, message })
+    public static create(type: LogType, message: string, ...fields: EmbedField[]) {
+      return new this({ type, message, fields })
     }
 
-    public add(type: LogType, message: string) {
-      this.logs.push({ type, message })
+    public add(type: LogType, message: string, ...fields: EmbedField[]) {
+      this.logs.push({ type, message, fields })
       return this
     }
 
@@ -45,13 +45,14 @@ export default function createLogger(bridge: Bridge) {
       return {
         author: { name: LogTypes[log.type].title },
         color: LogTypes[log.type].color,
-        description: log.message
+        description: log.message,
+        fields: log.fields
       }
     }
 
-    public static sendSingleLog(type: LogType, message: string) {
-      console.log(this.stringify({ type, message }))
-      this.discord.sendLog([this.buildEmbed({ type, message })])
+    public static sendSingleLog(type: LogType, message: string, ...fields: EmbedField[]) {
+      console.log(this.stringify({ type, message, fields }))
+      this.discord.sendLog([this.buildEmbed({ type, message, fields })])
     }
 
     public static sendErrorLog(error: Error) {
@@ -65,7 +66,13 @@ export default function createLogger(bridge: Bridge) {
           return {
             color,
             author: { name: title },
-            description: 'Demo Log!'
+            description: 'Demo Log!',
+            fields: [
+              {
+                name: 'Demo Field Name',
+                value: 'Demo Field Value'
+              }
+            ]
           }
         })
       )
@@ -76,6 +83,7 @@ export default function createLogger(bridge: Bridge) {
 interface Log {
   type: LogType
   message: string
+  fields?: EmbedField[]
 }
 
 type LogType = keyof typeof LogTypes

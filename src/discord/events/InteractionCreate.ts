@@ -9,10 +9,11 @@ const InteractionCreate: Event<'interactionCreate'> = {
   async execute(bridge, interaction) {
     if (!interaction.isChatInputCommand()) return
 
-    const log = bridge.log.create(
-      'command',
-      [`Command: ${inlineCode(interaction.commandName)}`, `User: ${inlineCode(interaction.user.tag)}`, `Arguments: ${interaction.options.data}`].join('\n')
-    )
+    const log = bridge.log.create('command', `${inlineCode(interaction.user.tag)} ran ${inlineCode(interaction.commandName)}`, {
+      name: 'Arguments',
+      value: interaction.options.data.map(({ name, value }) => `${inlineCode(name)}: ${inlineCode(String(value))}`).join('\n'),
+      inline: true
+    })
 
     try {
       const command = bridge.discord.commands.get(interaction.commandName)

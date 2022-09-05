@@ -93,8 +93,6 @@ export default class Minecraft {
     const logMessage = `${inlineCode(command)} added to command queue - current position: ${inlineCode(this.queue.length.toString())}`
     log?.add('command', logMessage) ?? this.bridge.log.sendSingleLog('command', logMessage)
 
-    console.log(this.looping)
-
     this.loop()
   }
 

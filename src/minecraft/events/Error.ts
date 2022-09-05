@@ -5,7 +5,11 @@ const End: Event<'error'> = {
   once: false,
 
   async execute(bridge, error) {
-    bridge.log.sendErrorLog(error)
+    try {
+      bridge.log.sendErrorLog(error)
+    } finally {
+      console.error(error)
+    }
   }
 }
 
