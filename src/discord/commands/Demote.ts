@@ -21,8 +21,8 @@ const Demote: DiscordCommand = {
   async execute(interaction, discord, log) {
     const user = interaction.options.getString('username')?.trim()
 
-    if (!user) return interaction.reply({ embeds: [SimpleEmbed('failure', 'User argument not found')] })
-    if (user.match(/\s/g)) return interaction.reply({ embeds: [SimpleEmbed('failure', 'User argument cannot contain spaces')] })
+    if (!user) return interaction.editReply({ embeds: [SimpleEmbed('failure', 'User argument not found')] })
+    if (user.match(/\s/g)) return interaction.editReply({ embeds: [SimpleEmbed('failure', 'User argument cannot contain spaces')] })
 
     const command = `/g demote ${user}`
 

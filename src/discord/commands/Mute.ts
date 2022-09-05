@@ -30,9 +30,9 @@ const Mute: DiscordCommand = {
     const user = interaction.options.getString('username')?.trim()
     const time = interaction.options.getString('time')?.replace(/\s/g, '')
 
-    if (!user) return interaction.reply({ embeds: [SimpleEmbed('failure', 'User argument not found')] })
-    if (user.match(/\s/g)) return interaction.reply({ embeds: [SimpleEmbed('failure', 'User argument cannot contain spaces')] })
-    if (!time) return interaction.reply({ embeds: [SimpleEmbed('failure', 'Time argument not found')] })
+    if (!user) return interaction.editReply({ embeds: [SimpleEmbed('failure', 'User argument not found')] })
+    if (user.match(/\s/g)) return interaction.editReply({ embeds: [SimpleEmbed('failure', 'User argument cannot contain spaces')] })
+    if (!time) return interaction.editReply({ embeds: [SimpleEmbed('failure', 'Time argument not found')] })
 
     const command = `/g mute ${user} ${time}`
 
