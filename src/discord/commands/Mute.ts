@@ -26,7 +26,7 @@ const Mute: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
-  async execute(interaction, discord, log) {
+  async execute(interaction, bridge, log) {
     const user = interaction.options.getString('username')?.trim()
     const time = interaction.options.getString('time')?.replace(/\s/g, '')
 
@@ -36,19 +36,19 @@ const Mute: DiscordCommand = {
 
     const command = `/g mute ${user} ${time}`
 
-    return discord.minecraft.execute(
+    return bridge.minecraft.execute(
       {
         command,
         regex: [
           {
-            exp: RegExp(`^(?:\\[.+?\\] )?(?:${discord.minecraft.username}) has muted (?:\\[.+?\\] )?(${user}) for (\\d+\\w)$`, 'i'),
+            exp: RegExp(`^(?:\\[.+?\\] )?(?:${bridge.minecraft.username}) has muted (?:\\[.+?\\] )?(${user}) for (\\d+\\w)$`, 'i'),
             exec: ([, username, time]) =>
               interaction.editReply({
                 embeds: [SimpleEmbed('success', `${inlineCode(username)} has been muted for ${inlineCode(time)}`)]
               })
           },
           {
-            exp: RegExp(`^(?:\\[.+?\\] )?(?:${discord.minecraft.username}) has muted the guild chat for (\\d+\\w)$`),
+            exp: RegExp(`^(?:\\[.+?\\] )?(?:${bridge.minecraft.username}) has muted the guild chat for (\\d+\\w)$`),
             exec: () =>
               interaction.editReply({
                 embeds: [SimpleEmbed('success', `Guild chat has been muted for ${inlineCode(time)}`)]

@@ -1,9 +1,9 @@
 import { APIEmbed } from 'discord.js'
-import Discord from '../discord'
+import Bridge from './Bridge'
 
-export default function createLogger(discord: Discord) {
+export default function createLogger(bridge: Bridge) {
   return class LogGroup {
-    private static readonly discord = discord
+    private static readonly discord = bridge.discord
     private logs: Log[] = []
 
     private constructor(startingLog: Log) {

@@ -24,7 +24,7 @@ const Kick: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
-  async execute(interaction, discord, log) {
+  async execute(interaction, bridge, log) {
     const user = interaction.options.getString('username')?.trim()
     const reason = interaction.options.getString('reason') ?? 'No reason specified'
 
@@ -33,12 +33,12 @@ const Kick: DiscordCommand = {
 
     const command = `/g kick ${user} ${reason}`
 
-    return discord.minecraft.execute(
+    return bridge.minecraft.execute(
       {
         command,
         regex: [
           {
-            exp: RegExp(`^(?:\\[.+?\\] )?(${user}) was kicked from the guild by (?:\\[.+?\\] )?(${discord.minecraft.username})!$`, 'i'),
+            exp: RegExp(`^(?:\\[.+?\\] )?(${user}) was kicked from the guild by (?:\\[.+?\\] )?(${bridge.minecraft.username})!$`, 'i'),
             exec: ([, username]) => interaction.editReply({ embeds: [SimpleEmbed('success', `${inlineCode(username)} was kicked from the guild`)] })
           },
           notInGuild(interaction),

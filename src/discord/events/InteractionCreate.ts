@@ -6,16 +6,16 @@ const InteractionCreate: Event<'interactionCreate'> = {
   name: 'interactionCreate',
   once: false,
 
-  async execute(discord, interaction) {
+  async execute(bridge, interaction) {
     if (!interaction.isChatInputCommand()) return
 
-    const log = discord.log.create(
+    const log = bridge.log.create(
       'command',
       [`Command: ${inlineCode(interaction.commandName)}`, `User: ${inlineCode(interaction.user.tag)}`, `Arguments: ${interaction.options.data}`].join('\n')
     )
 
     try {
-      const command = discord.commands.get(interaction.commandName)
+      const command = bridge.discord.commands.get(interaction.commandName)
 
       if (!command) {
         log.add('error', `Command ${interaction.commandName} called but implementation not found`)
@@ -26,11 +26,11 @@ const InteractionCreate: Event<'interactionCreate'> = {
         case 'staff':
           if (
             !(interaction.member?.roles instanceof GuildMemberRoleManager
-              ? interaction.member?.roles.cache.has(discord.config.staffRole)
-              : interaction.member?.roles.includes(discord.config.staffRole))
+              ? interaction.member?.roles.cache.has(bridge.config.staffRole)
+              : interaction.member?.roles.includes(bridge.config.staffRole))
           ) {
             return interaction.reply({
-              embeds: [SimpleEmbed('failure', [`You don't have permission to do that.`, `Required permission: <@&${discord.config.staffRole}>`].join('\n'))],
+              embeds: [SimpleEmbed('failure', [`You don't have permission to do that.`, `Required permission: <@&${bridge.config.staffRole}>`].join('\n'))],
               ephemeral: true
             })
           }
@@ -56,7 +56,7 @@ const InteractionCreate: Event<'interactionCreate'> = {
       await interaction.deferReply()
 
       try {
-        return await command.execute(interaction, discord, log)
+        return await command.execute(interaction, bridge, log)
       } catch (error) {
         if (error instanceof Error) {
           log.add('error', [error.name, error.stack].join('\n'))

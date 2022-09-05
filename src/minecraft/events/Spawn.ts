@@ -6,25 +6,25 @@ const Spawn: Event<'spawn'> = {
   name: 'spawn',
   once: false,
 
-  async execute(minecraft) {
-    minecraft.loggedIn = true
-    minecraft.relogAttempts = 0
+  async execute(bridge) {
+    bridge.minecraft.loggedIn = true
+    bridge.minecraft.relogAttempts = 0
 
-    if (minecraft.lastStatusMessage == 'logout') {
-      minecraft.lastStatusMessage = 'login'
-      minecraft.discord.sendEmbed(
+    if (bridge.minecraft.lastStatusMessage == 'logout') {
+      bridge.minecraft.lastStatusMessage = 'login'
+      bridge.discord.sendEmbed(
         FullEmbed('success', {
           author: {
             name: 'Chat Bridge is Online'
           },
-          description: `Connected as ${inlineCode(minecraft.username)} on version ${inlineCode(minecraft.version)}`
+          description: `Connected as ${inlineCode(bridge.minecraft.username)} on version ${inlineCode(bridge.minecraft.version)}`
         }),
         'both'
       )
     }
 
-    minecraft.priorityExecute('/locraw')
-    return minecraft.loop()
+    bridge.minecraft.priorityExecute('/locraw')
+    return bridge.minecraft.loop()
   }
 }
 

@@ -4,8 +4,8 @@ const End: Event<'error'> = {
   name: 'error',
   once: false,
 
-  async execute(minecraft, error) {
-    minecraft.discord.log.sendErrorLog(error)
+  async execute(bridge, error) {
+    bridge.log.sendErrorLog(error)
   }
 }
 

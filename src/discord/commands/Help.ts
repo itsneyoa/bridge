@@ -8,8 +8,8 @@ const Help: DiscordCommand = {
   options: [],
   permission: 'all',
   dmPermission: true,
-  async execute(interaction, discord) {
-    const discordCommands = [...discord.commands.values()]
+  async execute(interaction, bridge) {
+    const discordCommands = [...bridge.discord.commands.values()]
       .sort()
       .map(command => `${inlineCode(command.name)}: ${command.description}`)
       .join('\n')
@@ -27,15 +27,11 @@ const Help: DiscordCommand = {
           value: discordCommands
         },
         {
-          name: 'Minecraft Commands',
-          value: 'abcdefg'
-        },
-        {
           name: 'Info',
           value: [
-            `Guild Channel: <#${discord.config.channels.guild}>`,
-            `Officer Channel: <#${discord.config.channels.officer}>`,
-            `Staff Role: <@&${discord.config.staffRole}>`,
+            `Guild Channel: <#${bridge.config.channels.guild}>`,
+            `Officer Channel: <#${bridge.config.channels.officer}>`,
+            `Staff Role: <@&${bridge.config.staffRole}>`,
             `Version: ${inlineCode(process.env['npm_package_version'] ?? 'Unknown')}`
           ].join('\n')
         }

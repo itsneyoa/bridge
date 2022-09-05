@@ -4,9 +4,9 @@ const End: Event<'end'> = {
   name: 'end',
   once: false,
 
-  async execute(minecraft) {
-    minecraft.loggedIn = false
-    minecraft.refreshBot()
+  async execute(bridge) {
+    bridge.minecraft.loggedIn = false
+    bridge.minecraft.refreshBot()
   }
 }
 

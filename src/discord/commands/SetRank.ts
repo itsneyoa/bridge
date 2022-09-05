@@ -24,7 +24,7 @@ const SetRank: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
-  async execute(interaction, discord, log) {
+  async execute(interaction, bridge, log) {
     const user = interaction.options.getString('username')?.trim()
     const rank = interaction.options.getString('rank')?.trim()
 
@@ -34,7 +34,7 @@ const SetRank: DiscordCommand = {
 
     const command = `/g setrank ${user} ${rank}`
 
-    return discord.minecraft.execute(
+    return bridge.minecraft.execute(
       {
         command,
         regex: [

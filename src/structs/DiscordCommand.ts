@@ -1,10 +1,10 @@
 import { ChatInputApplicationCommandData, ChatInputCommandInteraction, CommandInteraction } from 'discord.js'
 import { SimpleEmbed } from '../utils/Embed'
-import Discord from '../discord'
+import Bridge from './Bridge'
 
 export default interface DiscordCommand extends ChatInputApplicationCommandData {
   permission: 'all' | 'staff' | 'owner'
-  execute: (command: ChatInputCommandInteraction, discord: Discord, log: ReturnType<typeof discord.log.create>) => Promise<unknown>
+  execute: (command: ChatInputCommandInteraction, bridge: Bridge, log: ReturnType<typeof bridge.log.create>) => Promise<unknown>
 }
 
 export function noResponse(interaction: CommandInteraction) {

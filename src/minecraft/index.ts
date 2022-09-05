@@ -1,4 +1,3 @@
-import Discord from '../discord'
 import { Bot, createBot as mineflayerCreateBot } from 'mineflayer'
 import Dev from '../utils/Dev'
 import { readdirSync } from 'fs'
@@ -6,9 +5,10 @@ import { join } from 'path'
 import { FullEmbed } from '../utils/Embed'
 import { inlineCode } from 'discord.js'
 import { setTimeout as sleep } from 'timers/promises'
+import Bridge from '../structs/Bridge'
 
 export default class Minecraft {
-  public readonly discord: Discord
+  public readonly bridge: Bridge
   private readonly queue: Array<CommandToRun> = []
   private looping = false
   private bot: Bot
@@ -16,8 +16,8 @@ export default class Minecraft {
   public relogAttempts = 0
   public loggedIn = false
 
-  constructor(discord: Discord) {
-    this.discord = discord
+  constructor(bridge: Bridge) {
+    this.bridge = bridge
 
     this.bot = this.createBot()
   }
@@ -50,20 +50,20 @@ export default class Minecraft {
     let c = 0
     for (const path of readdirSync(join(__dirname, 'events')).map(fileName => join(__dirname, 'events', fileName))) {
       const event = (await import(path)).default
-      bot[event.once ? 'once' : 'on'](event.name, (...args: never[]) => event.execute(this, ...args))
+      bot[event.once ? 'once' : 'on'](event.name, (...args: never[]) => event.execute(this.bridge, ...args))
       c++
     }
-    this.discord.log.sendSingleLog('info', `${inlineCode(c.toString())} Minecraft events loaded`)
+    this.bridge.log.sendSingleLog('info', `${inlineCode(c.toString())} Minecraft events loaded`)
   }
 
   public refreshBot() {
     const delay = this.relogAttempts < 24 ? ++this.relogAttempts * 5 : 24
 
-    this.discord.log.sendSingleLog('info', `Minecraft bot disconnected from the server! Relogging in ${inlineCode(delay.toString())} seconds.`)
+    this.bridge.log.sendSingleLog('info', `Minecraft bot disconnected from the server! Relogging in ${inlineCode(delay.toString())} seconds.`)
 
     if (this.lastStatusMessage == 'login') {
       this.lastStatusMessage = 'logout'
-      this.discord.sendEmbed(
+      this.bridge.discord.sendEmbed(
         FullEmbed('failure', {
           author: {
             name: 'Chat Bridge is Offline'
@@ -79,19 +79,19 @@ export default class Minecraft {
     }, delay * 1000)
   }
 
-  public execute(fullCommand: CommandToRun, log: ReturnType<typeof this.discord.log.create>) {
+  public execute(fullCommand: CommandToRun, log: ReturnType<typeof this.bridge.log.create>) {
     let command = fullCommand.command.trim()
     if (!command.startsWith('/')) command = '/' + command
 
     if (command.length > 256) {
       const warningMessage = `Command ${command} length is greater than 256, truncating`
-      log?.add('error', warningMessage) ?? this.discord.log.sendErrorLog(Error(warningMessage))
+      log?.add('error', warningMessage) ?? this.bridge.log.sendErrorLog(Error(warningMessage))
       command = command.slice(0, 256)
     }
 
     this.queue.push(fullCommand)
     const logMessage = `${inlineCode(command)} added to command queue - current position: ${inlineCode(this.queue.length.toString())}`
-    log?.add('command', logMessage) ?? this.discord.log.sendSingleLog('command', logMessage)
+    log?.add('command', logMessage) ?? this.bridge.log.sendSingleLog('command', logMessage)
 
     console.log(this.looping)
 
@@ -116,7 +116,7 @@ export default class Minecraft {
 
       const { command, regex, noResponse } = currentCommand
 
-      this.discord.log.sendSingleLog('command', `Running ${inlineCode(command)}`)
+      this.bridge.log.sendSingleLog('command', `Running ${inlineCode(command)}`)
       this.bot.chat(command)
 
       if (regex?.length) {
@@ -145,7 +145,7 @@ export default class Minecraft {
 interface CommandToRun {
   command: string
   regex?: Array<ChatTrigger>
-  noResponse?: () => unknown,
+  noResponse?: () => unknown
 }
 
 export type ChatTrigger = { exp: RegExp; exec: (reason: RegExpMatchArray) => unknown }

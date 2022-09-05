@@ -1,9 +1,6 @@
 import 'dotenv/config'
-import Discord from './src/discord'
+import Bridge from './src/structs/Bridge'
 
 process.title = 'Chat Bridge'
 
-Discord.create().catch(err => {
-  console.error(err)
-  process.exit(1)
-})
+new Bridge().start()

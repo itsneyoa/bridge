@@ -5,9 +5,9 @@ const InteractionCreate: Event<'error'> = {
   name: 'error',
   once: false,
 
-  async execute(discord, error) {
+  async execute(bridge, error) {
     try {
-      discord.log.sendSingleLog('info', `${error.name}: ${codeBlock(error.message)}`)
+      bridge.log.sendSingleLog('info', `${error.name}: ${codeBlock(error.message)}`)
     } finally {
       console.error(error)
     }

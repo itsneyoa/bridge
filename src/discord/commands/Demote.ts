@@ -18,7 +18,7 @@ const Demote: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
-  async execute(interaction, discord, log) {
+  async execute(interaction, bridge, log) {
     const user = interaction.options.getString('username')?.trim()
 
     if (!user) return interaction.editReply({ embeds: [SimpleEmbed('failure', 'User argument not found')] })
@@ -26,7 +26,7 @@ const Demote: DiscordCommand = {
 
     const command = `/g demote ${user}`
 
-    return discord.minecraft.execute(
+    return bridge.minecraft.execute(
       {
         command,
         regex: [

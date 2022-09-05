@@ -18,7 +18,7 @@ const Unmute: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
-  async execute(interaction, discord, log) {
+  async execute(interaction, bridge, log) {
     const user = interaction.options.getString('username')
 
     if (!user) return interaction.editReply({ embeds: [SimpleEmbed('failure', 'User argument not found')] })
@@ -26,19 +26,19 @@ const Unmute: DiscordCommand = {
 
     const command = `/g unmute ${user}`
 
-    return discord.minecraft.execute(
+    return bridge.minecraft.execute(
       {
         command,
         regex: [
           {
-            exp: RegExp(`^(?:\\[.+?\\] )?(?:${discord.minecraft.username}) has unmuted (?:\\[.+?\\] )?(${user})$`, 'i'),
+            exp: RegExp(`^(?:\\[.+?\\] )?(?:${bridge.minecraft.username}) has unmuted (?:\\[.+?\\] )?(${user})$`, 'i'),
             exec: ([, username]) =>
               interaction.editReply({
                 embeds: [SimpleEmbed('success', `${inlineCode(username)} has been unmuted`)]
               })
           },
           {
-            exp: RegExp(`^(?:\\[.+?\\] )?(${discord.minecraft.username}) has unmuted the guild chat!$`),
+            exp: RegExp(`^(?:\\[.+?\\] )?(${bridge.minecraft.username}) has unmuted the guild chat!$`),
             exec: () =>
               interaction.editReply({
                 embeds: [SimpleEmbed('success', `Guild chat has been unmuted`)]

@@ -1,9 +1,9 @@
 import { ClientEvents } from 'discord.js'
-import Discord from '../discord'
+import Bridge from './Bridge'
 
 export default interface DiscordEvent<K extends keyof ClientEvents> {
   name: K
   once: boolean
 
-  execute(discord: Discord, ...args: ClientEvents[K]): Promise<unknown>
+  execute(bridge: Bridge, ...args: ClientEvents[K]): Promise<unknown>
 }

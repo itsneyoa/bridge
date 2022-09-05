@@ -8,9 +8,9 @@ const Reload: DiscordCommand = {
   options: [],
   permission: 'owner',
   dmPermission: true,
-  async execute(interaction, discord) {
-    const commands = await discord.loadCommands()
-    await discord.publishCommands()
+  async execute(interaction, bridge) {
+    const commands = await bridge.discord.loadCommands()
+    await bridge.discord.publishCommands()
 
     return interaction.editReply({ embeds: [SimpleEmbed('success', `${inlineCode(commands.toString())} commands reloaded`)] })
   }

@@ -1,5 +1,5 @@
 import { inlineCode, Message } from 'discord.js'
-import Discord from '..'
+import Bridge from '../../structs/Bridge'
 import Chat from '../../structs/Chat'
 import Event from '../../structs/DiscordEvent'
 import cleanContent from '../../utils/CleanDiscordContent'
@@ -10,27 +10,27 @@ const InteractionCreate: Event<'messageCreate'> = {
   name: 'messageCreate',
   once: false,
 
-  async execute(discord, message) {
-    if (message.author.id == discord.user.id || message.author.system || message.webhookId) return
+  async execute(bridge, message) {
+    if (message.author.id == bridge.discord.user.id || message.author.system || message.webhookId) return
 
     switch (message.channelId) {
-      case discord.config.channels.guild:
-        return handleMessage(discord, message, 'guild')
+      case bridge.config.channels.guild:
+        return handleMessage(bridge, message, 'guild')
 
-      case discord.config.channels.officer:
-        return handleMessage(discord, message, 'officer')
+      case bridge.config.channels.officer:
+        return handleMessage(bridge, message, 'officer')
     }
   }
 }
 
-function handleMessage(discord: Discord, message: Message, chat: Chat) {
+function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
   let prefix = message.member?.nickname ?? message.author.username
   let content = cleanContent(message.content, message.channel).trim()
 
   const invalidContent = containsInvalidCharacters(content)
   const invalidPrefix = containsInvalidCharacters(prefix)
 
-  const log = discord.log.create('chat', `${inlineCode(prefix)}: ${inlineCode(content)}`)
+  const log = bridge.log.create('chat', `${inlineCode(prefix)}: ${inlineCode(content)}`)
 
   try {
     if (invalidContent) content = cleanString(content)
@@ -45,12 +45,12 @@ function handleMessage(discord: Discord, message: Message, chat: Chat) {
 
     if (invalidContent || invalidPrefix) message.react(Styles.warnings.invalidMessage.emoji)
 
-    return discord.minecraft.execute(
+    return bridge.minecraft.execute(
       {
         command: `${commands[chat]} ${prefix}: ${content}`,
         regex: [
           {
-            exp: RegExp(`^Guild > (?:\\[.+?\\] )?${discord.minecraft.username}(?: \\[.+?\\])?: ${prefix}: .*`),
+            exp: RegExp(`^Guild > (?:\\[.+?\\] )?${bridge.minecraft.username}(?: \\[.+?\\])?: ${prefix}: .*`),
             exec: () => undefined
           },
           {

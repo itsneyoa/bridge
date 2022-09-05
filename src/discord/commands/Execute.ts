@@ -15,14 +15,14 @@ const Execute: DiscordCommand = {
   ],
   permission: 'owner',
   dmPermission: false,
-  async execute(interaction, discord, log) {
+  async execute(interaction, bridge, log) {
     let command = interaction.options.getString('command')?.trim()
 
     if (!command) return interaction.editReply({ embeds: [SimpleEmbed('failure', 'Command argument not found')] })
 
     if (!command.startsWith('/')) command = '/' + command
 
-    discord.minecraft.execute({ command }, log)
+    bridge.minecraft.execute({ command }, log)
     return interaction.editReply({ embeds: [SimpleEmbed('success', `Running ${inlineCode(command)}`)] })
   }
 }
