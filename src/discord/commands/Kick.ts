@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, notInGuild, playerNotFound } from '../../utils/CommonRegex'
+import { noPermission, notInGuild, playerNotFound, unknownCommand } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Kick: DiscordCommand = {
@@ -47,7 +47,8 @@ const Kick: DiscordCommand = {
           {
             exp: RegExp(`^Invalid usage! '\\/guild kick <player> <reason>'$`),
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', 'Missing reason')] })
-          }
+          },
+          unknownCommand(interaction)
         ],
         noResponse: noResponse(interaction)
       },

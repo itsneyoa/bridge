@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, notInGuild, playerNotFound } from '../../utils/CommonRegex'
+import { noPermission, notInGuild, playerNotFound, unknownCommand } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const SetRank: DiscordCommand = {
@@ -64,7 +64,8 @@ const SetRank: DiscordCommand = {
             exp: /^You can only (demote|promote) up to your own rank!$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `I don't have permission to do that`)] })
           },
-          noPermission(interaction)
+          noPermission(interaction),
+          unknownCommand(interaction)
         ],
         noResponse: noResponse(interaction)
       },

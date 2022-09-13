@@ -85,13 +85,13 @@ export default class Minecraft {
 
     if (command.length > 256) {
       const warningMessage = `Command ${command} length is greater than 256, truncating`
-      log?.add('error', warningMessage) ?? this.bridge.log.sendErrorLog(Error(warningMessage))
+      log.add('error', warningMessage) ?? this.bridge.log.sendErrorLog(Error(warningMessage))
       command = command.slice(0, 256)
     }
 
     this.queue.push(fullCommand)
     const logMessage = `${inlineCode(command)} added to command queue - current position: ${inlineCode(this.queue.length.toString())}`
-    log?.add('command', logMessage) ?? this.bridge.log.sendSingleLog('command', logMessage)
+    log.add('command', logMessage) ?? this.bridge.log.sendSingleLog('command', logMessage)
 
     this.loop()
   }
@@ -117,10 +117,20 @@ export default class Minecraft {
       this.bridge.log.sendSingleLog('command', `Running ${inlineCode(command)}`)
       this.bot.chat(command)
 
-      if (regex?.length) {
-        const response = await Promise.race([this.bot.awaitMessage(...regex.map(({ exp }) => exp)), sleep(10 * 1000)]) // Either we get a valid response after 10 seconds or we reject
+      const response = await Promise.race([
+        regex ? this.bot.awaitMessage(...regex.map(({ exp }) => exp)) : this.bot.awaitMessage(tooFast, unknownCommand),
+        sleep(10 * 1000)
+      ]) // Either we get a valid response after 10 seconds or we reject
 
-        if (response) {
+      if (response) {
+        if (response.match(unknownCommand)) this.bridge.log.sendSingleLog('error', `Command ${inlineCode(command)} not found`)
+
+        if (response.match(tooFast)) {
+          sleep(0.5 * 1000) // Half a second
+          return this.priorityExecute(command)
+        }
+
+        if (regex) {
           for (const { exp, exec } of regex) {
             const match = response.match(exp)
 
@@ -128,9 +138,9 @@ export default class Minecraft {
 
             return exec(match)
           }
-        } else {
-          if (noResponse) return noResponse()
         }
+      } else {
+        if (noResponse) return noResponse()
       }
     } finally {
       // await sleep(500)
@@ -147,3 +157,6 @@ interface CommandToRun {
 }
 
 export type ChatTrigger = { exp: RegExp; exec: (reason: RegExpMatchArray) => unknown }
+
+export const unknownCommand = /^Unknown command. Type "\/help" for help.$/
+export const tooFast = /^You are sending commands too fast! Please slow down.$/

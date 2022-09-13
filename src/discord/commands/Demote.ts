@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, notInGuild, playerNotFound } from '../../utils/CommonRegex'
+import { unknownCommand, noPermission, notInGuild, playerNotFound } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Demote: DiscordCommand = {
@@ -47,7 +47,8 @@ const Demote: DiscordCommand = {
             exp: /^(?:You can only demote up to your own rank!|(?:\[.+?\] )?(\w+) is the guild master so can't be demoted!)$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `I don't have permission to do that`)] })
           },
-          noPermission(interaction)
+          noPermission(interaction),
+          unknownCommand(interaction)
         ],
         noResponse: noResponse(interaction)
       },

@@ -39,6 +39,7 @@ function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
       log.add('chat', 'Message had no content after clearning')
       return message.react(Styles.warnings.emptyMessage.emoji)
     }
+
     if (invalidPrefix) prefix = cleanString(prefix)
 
     if (!prefix) prefix = 'Unknown'

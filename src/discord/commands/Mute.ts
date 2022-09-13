@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, notInGuild, playerNotFound } from '../../utils/CommonRegex'
+import { noPermission, notInGuild, playerNotFound, unknownCommand } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Mute: DiscordCommand = {
@@ -72,7 +72,8 @@ const Mute: DiscordCommand = {
           {
             exp: /^Invalid time format! Try 7d, 1d, 6h, 1h$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', 'Invalid mute length given')] })
-          }
+          },
+          unknownCommand(interaction)
         ],
         noResponse: noResponse(interaction)
       },

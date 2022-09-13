@@ -1,6 +1,7 @@
 import { CommandInteraction, inlineCode } from 'discord.js'
 import { ChatTrigger } from '../minecraft'
 import { SimpleEmbed } from './Embed'
+import { unknownCommand as unknownCommandRegex } from '../minecraft'
 
 export function notInGuild(interaction: CommandInteraction): ChatTrigger {
   return {
@@ -26,4 +27,15 @@ export function playerNotFound(interaction: CommandInteraction, username: string
     exp: RegExp(`^Can't find a player by the name of '${username}'$`, 'i'),
     exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `Could not find player ${inlineCode(username)}`)] })
   }
+}
+
+export function unknownCommand(interaction: CommandInteraction): ChatTrigger {
+  return {
+    exp: unknownCommandRegex,
+    exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `Unknown command`)] })
+  }
+}
+
+export function escapeRegex(str: string) {
+  return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }

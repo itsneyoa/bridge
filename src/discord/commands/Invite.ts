@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, playerNotFound } from '../../utils/CommonRegex'
+import { noPermission, playerNotFound, unknownCommand } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Invite: DiscordCommand = {
@@ -59,7 +59,8 @@ const Invite: DiscordCommand = {
             exp: /^You cannot invite this player to your guild!$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(user)} has guild invites disabled`)] })
           },
-          noPermission(interaction)
+          noPermission(interaction),
+          unknownCommand(interaction)
         ],
         noResponse: noResponse(interaction)
       },
