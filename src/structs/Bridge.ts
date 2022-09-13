@@ -17,6 +17,6 @@ export default class Bridge {
   }
 
   public async start() {
-    await this.discord.init()
+    this.discord.init()
   }
 }
