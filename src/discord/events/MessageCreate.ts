@@ -6,7 +6,7 @@ import cleanContent from '../../utils/CleanDiscordContent'
 import Styles from '../../utils/Styles'
 import { cleanString, containsInvalidCharacters } from '../../utils/ValidMinecraftCharacters'
 
-const InteractionCreate: Event<'messageCreate'> = {
+const MessageCreate: Event<'messageCreate'> = {
   name: 'messageCreate',
   once: false,
 
@@ -77,4 +77,4 @@ const commands: { [key in Chat]: `/${string}` } = {
   officer: '/oc'
 }
 
-export default InteractionCreate
+export default MessageCreate

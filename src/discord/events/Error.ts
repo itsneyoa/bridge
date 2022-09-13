@@ -1,7 +1,7 @@
 import { codeBlock } from 'discord.js'
 import Event from '../../structs/DiscordEvent'
 
-const InteractionCreate: Event<'error'> = {
+const Error: Event<'error'> = {
   name: 'error',
   once: false,
 
@@ -14,4 +14,4 @@ const InteractionCreate: Event<'error'> = {
   }
 }
 
-export default InteractionCreate
+export default Error
