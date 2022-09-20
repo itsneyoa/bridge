@@ -79,6 +79,15 @@ export default class Discord {
     if (Dev && process.env['DEV_SERVER_ID']) {
       return await this.client.application.commands.set([...this.commands.values()], process.env['DEV_SERVER_ID'])
     } else {
+      await Promise.all(
+        Object.values(this.bridge.config.channels).map(async channelId => {
+          if (!channelId) return
+          const channel = await this.client.channels.fetch(channelId)
+
+          if (channel?.isTextBased() && !channel.isDMBased()) return this.client.application.commands.set([], channel.guild.id)
+        })
+      )
+
       return await this.client.application.commands.set([...this.commands.values()])
     }
   }
