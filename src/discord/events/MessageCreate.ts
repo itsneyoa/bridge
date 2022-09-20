@@ -51,7 +51,7 @@ function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
         command: `${commands[chat]} ${prefix}: ${content}`,
         regex: [
           {
-            exp: RegExp(`^Guild > (?:\\[.+?\\] )?${bridge.minecraft.username}(?: \\[.+?\\])?: ${prefix}: .*`),
+            exp: RegExp(`^(?:Guild|Officer) > (?:\\[.+?\\] )?${bridge.minecraft.username}(?: \\[.+?\\])?: ${prefix}: .*`),
             exec: () => undefined
           },
           {
