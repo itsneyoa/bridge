@@ -56,7 +56,6 @@ export default function createLogger(bridge: Bridge) {
     }
 
     public static sendErrorLog(error: Error) {
-      console.error(error)
       this.discord.sendLog([this.buildEmbed({ type: 'error', message: [`**${error.name}**`, error.message].join('\n') })])
     }
 

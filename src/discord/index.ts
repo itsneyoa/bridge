@@ -102,10 +102,10 @@ export default class Discord {
       const { username, avatar } = webhookOptions
       return (await this.resolveWebhook(destination))
         .send({ ...payload, username: username, avatarURL: avatar ? headUrl(username) : undefined })
-        .catch(this.bridge.log.sendErrorLog)
+        .catch(error => this.bridge.log.sendErrorLog(error))
     } else {
       if (channel?.isTextBased() && this.client.isReady()) {
-        return await channel.send(payload).catch(this.bridge.log.sendErrorLog)
+        return await channel.send(payload).catch(error => this.bridge.log.sendErrorLog(error))
       }
     }
   }
