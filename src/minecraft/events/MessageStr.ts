@@ -34,7 +34,7 @@ const messages: Array<(message: string, bridge: Bridge, log: ReturnType<typeof b
       if (json['server'] == 'limbo') {
         log.add('info', `Minecraft bot successfully sent to limbo`)
       } else {
-        bridge.minecraft.priorityExecute('/ac §')
+        bridge.minecraft.priorityExecute('§')
         log.add('info', [`Lobby detected, sending to limbo`, ...Object.entries(json).map(([key, value]) => `${key}: ${inlineCode(String(value))}`)].join('\n'))
       }
       return true
