@@ -19,7 +19,7 @@ const Help: DiscordCommand = {
 
     const embed: APIEmbed = {
       author: {
-        name: 'Help!',
+        name: 'Bridge Help',
         icon_url: interaction.client.user?.avatarURL() ?? undefined
       },
       fields: [
@@ -30,7 +30,7 @@ const Help: DiscordCommand = {
         {
           name: 'Emojis',
           value: Object.values(Styles.warnings)
-            .map(({ emoji, explanation }) => `${inlineCode(emoji)}: ${explanation}}`)
+            .map(({ emoji, explanation }) => `${inlineCode(emoji)}: ${explanation}`)
             .join('\n'),
         },
         {
