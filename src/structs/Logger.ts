@@ -56,7 +56,11 @@ export default function createLogger(bridge: Bridge) {
     }
 
     public static sendErrorLog(error: Error) {
-      this.discord.sendLog([this.buildEmbed({ type: 'error', message: [`**${error.name}**`, error.message].join('\n') })])
+      try {
+        this.discord.sendLog([this.buildEmbed({ type: 'error', message: [`**${error.name}**`, error.message].join('\n') })])
+      } finally {
+        console.error(error)
+      }
     }
 
     public static sendDemoLogs() {

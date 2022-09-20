@@ -9,11 +9,14 @@ const InteractionCreate: Event<'interactionCreate'> = {
   async execute(bridge, interaction) {
     if (!interaction.isChatInputCommand()) return
 
-    const log = bridge.log.create('command', `${inlineCode(interaction.user.tag)} ran ${inlineCode(interaction.commandName)}`, {
-      name: 'Arguments',
-      value: interaction.options.data.map(({ name, value }) => `${inlineCode(name)}: ${inlineCode(String(value))}`).join('\n'),
-      inline: true
-    })
+    const message = `${inlineCode(interaction.user.tag)} ran ${inlineCode(interaction.commandName)}`
+    const log = interaction.options.data.length
+      ? bridge.log.create('command', message, {
+          name: 'Arguments',
+          value: interaction.options.data.map(({ name, value }) => `${inlineCode(name)}: ${inlineCode(String(value))}`).join('\n'),
+          inline: true
+        })
+      : bridge.log.create('command', message)
 
     try {
       const command = bridge.discord.commands.get(interaction.commandName)
@@ -39,15 +42,7 @@ const InteractionCreate: Event<'interactionCreate'> = {
         case 'owner':
           if (interaction.user.id != process.env['OWNER_ID']) {
             return interaction.reply({
-              embeds: [
-                SimpleEmbed(
-                  'failure',
-                  [
-                    `You don't have permission to do that.`,
-                    process.env['OWNER_ID'] ? `Required permission: <@!${process.env['OWNER_ID']}>` : `Owner ID not set in configuration`
-                  ].join('\n')
-                )
-              ],
+              embeds: [SimpleEmbed('failure', [`You don't have permission to do that.`, `Required permission: <@!${bridge.config.ownerId}>`].join('\n'))],
               ephemeral: true
             })
           }
