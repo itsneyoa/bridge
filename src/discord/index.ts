@@ -2,7 +2,6 @@ import { APIEmbed, Client, MessageOptions, inlineCode, Webhook, TextChannel } fr
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import Command from '../structs/DiscordCommand'
-import Dev from '../utils/Dev'
 import Config from '../utils/Config'
 import Chat from '../structs/Chat'
 import Bridge from '../structs/Bridge'
@@ -44,7 +43,7 @@ export default class Discord {
       await this.loadCommands()
       await this.publishCommands()
 
-      if (Dev) this.bridge.log.sendDemoLogs()
+      if (this.bridge.config.devServerId) this.bridge.log.sendDemoLogs()
       this.bridge.log.sendSingleLog('info', `Discord client ready, logged in as ${inlineCode(client.user.tag)}`)
       if (this.ready) this.ready()
     })
@@ -66,7 +65,7 @@ export default class Discord {
     for (const path of readdirSync(join(__dirname, 'commands')).map(fileName => join(__dirname, 'commands', fileName))) {
       delete require.cache[path]
       const command: Command = (await import(path)).default
-      if (Dev) command.description += ' (Dev)'
+      if (this.bridge.config.devServerId) command.description += ' (Dev)'
       this.commands.set(command.name, command)
       c++
     }
@@ -76,8 +75,8 @@ export default class Discord {
 
   public async publishCommands() {
     // This can be made much better lmao
-    if (Dev && process.env['DEV_SERVER_ID']) {
-      return await this.client.application.commands.set([...this.commands.values()], process.env['DEV_SERVER_ID'])
+    if (this.bridge.config.devServerId) {
+      return await this.client.application.commands.set([...this.commands.values()], this.bridge.config.devServerId)
     } else {
       await Promise.all(
         Object.values(this.bridge.config.channels).map(async channelId => {
