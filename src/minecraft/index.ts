@@ -1,5 +1,4 @@
 import { Bot, createBot as mineflayerCreateBot } from 'mineflayer'
-import Dev from '../utils/Dev'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import { FullEmbed } from '../utils/Embed'
@@ -35,10 +34,10 @@ export default class Minecraft {
       viewDistance: 'tiny',
       chatLengthLimit: 256,
       version: '1.8.9',
-      auth: Dev ? undefined : 'microsoft',
+      auth: this.bridge.config.devServerId ? undefined : 'microsoft',
       username: 'Bridge',
       defaultChatPatterns: false,
-      host: Dev ? 'localhost' : 'mc.hypixel.io',
+      host: this.bridge.config.devServerId ? 'localhost' : 'mc.hypixel.io',
       profilesFolder: './.minecraft/profiles'
     })
 

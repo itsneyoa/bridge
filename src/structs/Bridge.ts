@@ -10,9 +10,10 @@ export default class Bridge {
   readonly log: ReturnType<typeof createLogger>
 
   constructor() {
+    this.config = new Config()
+
     this.discord = new Discord(this)
     this.minecraft = new Minecraft(this)
-    this.config = new Config()
     this.log = createLogger(this)
   }
 
