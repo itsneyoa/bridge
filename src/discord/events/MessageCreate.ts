@@ -3,7 +3,7 @@ import Bridge from '../../structs/Bridge'
 import Chat from '../../structs/Chat'
 import Event from '../../structs/DiscordEvent'
 import cleanContent from '../../utils/CleanDiscordContent'
-import Styles from '../../utils/Styles'
+import { Warnings } from '../../utils/Styles'
 import { cleanString, containsInvalidCharacters } from '../../utils/ValidMinecraftCharacters'
 
 const MessageCreate: Event<'messageCreate'> = {
@@ -37,14 +37,14 @@ function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
 
     if (!content) {
       log.add('chat', 'Message had no content after clearning')
-      return message.react(Styles.warnings.emptyMessage.emoji)
+      return message.react(Warnings.emptyMessage.emoji)
     }
 
     if (invalidPrefix) prefix = cleanString(prefix)
 
     if (!prefix) prefix = 'Unknown'
 
-    if (invalidContent || invalidPrefix) message.react(Styles.warnings.invalidMessage.emoji)
+    if (invalidContent || invalidPrefix) message.react(Warnings.invalidMessage.emoji)
 
     return bridge.minecraft.execute(
       {
@@ -56,14 +56,18 @@ function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
           },
           {
             exp: /^You cannot say the same message twice!$/,
-            exec: () => message.react(Styles.warnings.repeatMessage.emoji)
+            exec: () => message.react(Warnings.repeatMessage.emoji)
           },
           {
             exp: /^We blocked your comment ".+"/,
-            exec: () => message.react(Styles.warnings.blocked.emoji)
+            exec: () => message.react(Warnings.blocked.emoji)
+          },
+          {
+            exp: /^Advertising is against the rules. You will receive a punishment on the server if you attempt to advertise.$/,
+            exec: () => message.react(Warnings.blocked.emoji)
           }
         ],
-        noResponse: () => message.react(Styles.warnings.timedOut.emoji)
+        noResponse: () => message.react(Warnings.timedOut.emoji)
       },
       log
     )

@@ -1,7 +1,7 @@
 import { APIEmbed, inlineCode } from 'discord.js'
 import DiscordCommand from '../../structs/DiscordCommand'
 import { headUrl } from '../../utils/Embed'
-import Styles from '../../utils/Styles'
+import { Warnings } from '../../utils/Styles'
 
 const Help: DiscordCommand = {
   name: 'help',
@@ -29,9 +29,9 @@ const Help: DiscordCommand = {
         },
         {
           name: 'Emojis',
-          value: Object.values(Styles.warnings)
+          value: Object.values(Warnings)
             .map(({ emoji, explanation }) => `${inlineCode(emoji)}: ${explanation}`)
-            .join('\n'),
+            .join('\n')
         },
         {
           name: 'Info',
@@ -40,7 +40,7 @@ const Help: DiscordCommand = {
             `Officer Channel: <#${bridge.config.channels.officer}>`,
             `Staff Role: <@&${bridge.config.staffRole}>`,
             `Version: ${inlineCode(process.env['npm_package_version'] ?? 'Unknown')}`
-          ].join('\n'),
+          ].join('\n')
         }
       ],
       color: interaction.guild?.members.me?.displayColor,

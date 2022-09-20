@@ -71,7 +71,7 @@ const messages: Array<(message: string, bridge: Bridge, log: ReturnType<typeof b
     const [, username, status] = match
 
     log.add('event', `${username} ${status}.`)
-    bridge.discord.sendEmbed(SimpleEmbed(status == 'joined' ? 'success' : 'failure', `${username} ${status}`), 'guild', { username, avatar: true })
+    bridge.discord.sendEmbed(SimpleEmbed(status == 'joined' ? 'success' : 'failure', `${username} ${status}.`), 'guild', { username, avatar: true })
     return true
   },
 

@@ -1,12 +1,12 @@
 import { APIEmbed } from 'discord.js'
-import Styles from './Styles'
+import {Colours} from './Styles'
 
-export function SimpleEmbed(type: keyof typeof Styles.colours, description: string): APIEmbed {
-  return { color: Styles.colours[type], description }
+export function SimpleEmbed(type: keyof typeof Colours, description: string): APIEmbed {
+  return { color: Colours[type], description }
 }
 
-export function FullEmbed(type: keyof typeof Styles.colours, data: APIEmbed): APIEmbed {
-  return { ...data, ...{ color: Styles.colours[type] } }
+export function FullEmbed(type: keyof typeof Colours, data: APIEmbed): APIEmbed {
+  return { ...data, ...{ color: Colours[type] } }
 }
 
 export function headUrl(username: string) {
