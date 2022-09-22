@@ -21,7 +21,9 @@ export default class Config {
     this.staffRole = this.resolveEnv('STAFF_ROLE_ID')
 
     this.logChannel = this.resolveEnv('LOG_CHANNEL_ID', true)
-    this.devServerId = this.resolveEnv('npm_lifecycle_event', true) == 'dev' ? this.resolveEnv('DEV_SERVER_ID') : undefined
+
+    const devMode = this.resolveEnv('npm_lifecycle_event', true) == 'dev'
+    this.devServerId = this.resolveEnv('DEV_SERVER_ID', !devMode)
   }
 
   private resolveEnv<Optional extends boolean = false>(name: string, optional?: Optional): Optional extends true ? string | undefined : string {

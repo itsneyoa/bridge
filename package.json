@@ -3,6 +3,7 @@
   "packageManager": "yarn@3.2.2",
   "main": "index.ts",
   "version": "1.0.0",
+  "license": "CC BY-NC-SA 4.0",
   "private": true,
   "scripts": {
     "start": "ts-node --transpileOnly .",
