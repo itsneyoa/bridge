@@ -65,6 +65,10 @@ function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
           {
             exp: /^Advertising is against the rules. You will receive a punishment on the server if you attempt to advertise.$/,
             exec: () => message.react(Warnings.blocked.emoji)
+          },
+          {
+            exp: /^Blocked message containing lobby command.$/,
+            exec: () => message.react(Warnings.blocked.emoji)
           }
         ],
         noResponse: () => message.react(Warnings.timedOut.emoji)
