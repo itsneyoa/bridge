@@ -24,8 +24,14 @@ const MessageCreate: Event<'messageCreate'> = {
   }
 }
 
-function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
+async function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
   let prefix = message.member?.nickname ?? message.author.username
+
+  if (message.reference?.messageId) {
+    const { author, member } = await message.channel.messages.fetch(message.reference.messageId)
+    if (member || author) prefix += ` ➜ ${member?.nickname ?? author.username}`
+  }
+
   let content = cleanContent(message.content, message.channel).trim()
 
   const invalidContent = containsInvalidCharacters(content)
