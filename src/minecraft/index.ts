@@ -118,9 +118,9 @@ export default class Minecraft {
       this.bot.chat(command)
 
       const response = await Promise.race([
-        regex ? this.bot.awaitMessage(...regex.map(({ exp }) => exp)) : this.bot.awaitMessage(tooFast, unknownCommand),
+        this.bot.awaitMessage(...(regex ? regex.map(({ exp }) => exp) : [unknownCommand]), tooFast),
         sleep(10 * 1000)
-      ]) // Either we get a valid response after 10 seconds or we reject
+      ])
 
       if (response) {
         if (response.match(unknownCommand)) this.bridge.log.sendSingleLog('error', `Command ${inlineCode(command)} not found`)

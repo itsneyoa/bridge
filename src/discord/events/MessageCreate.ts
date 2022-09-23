@@ -3,6 +3,7 @@ import Bridge from '../../structs/Bridge'
 import Chat from '../../structs/Chat'
 import Event from '../../structs/DiscordEvent'
 import cleanContent from '../../utils/CleanDiscordContent'
+import { unknownCommand } from '../../minecraft'
 import { Warnings } from '../../utils/Styles'
 import { cleanString, containsInvalidCharacters } from '../../utils/ValidMinecraftCharacters'
 
@@ -69,6 +70,10 @@ function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
           {
             exp: /^Blocked message containing lobby command.$/,
             exec: () => message.react(Warnings.blocked.emoji)
+          },
+          {
+            exp: unknownCommand,
+            exec: () => message.react(Warnings.unknownCommand.emoji)
           }
         ],
         noResponse: () => message.react(Warnings.timedOut.emoji)

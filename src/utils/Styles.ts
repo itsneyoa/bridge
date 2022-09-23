@@ -24,9 +24,9 @@ export const Warnings = {
   repeatMessage: {
     emoji: '🔁',
     explanation: 'You cannot say the same message twice'
+  },
+  unknownCommand: {
+    emoji: '❓',
+    explanation: 'The command which needs to be run was not found'
   }
-}
-
-export const Characters = {
-  arrow: '➜'
 }
