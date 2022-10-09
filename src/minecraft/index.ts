@@ -14,6 +14,7 @@ export default class Minecraft {
   public lastStatusMessage: 'logout' | 'login' = 'logout'
   public relogAttempts = 0
   public loggedIn = false
+  public chatLengthLimit = 256
 
   constructor(bridge: Bridge) {
     this.bridge = bridge
@@ -32,7 +33,7 @@ export default class Minecraft {
   private createBot() {
     const bot = mineflayerCreateBot({
       viewDistance: 'tiny',
-      chatLengthLimit: 256,
+      chatLengthLimit: this.chatLengthLimit,
       version: '1.17.1',
       auth: this.bridge.config.devServerId ? undefined : 'microsoft',
       username: 'Bridge',

@@ -38,9 +38,10 @@
 ### Dev environment setup
 
 1. [Add extra values to config file](#extra-env-keys-for-development)
-2. Add a Minecraft Server jar to `server/`, setting `offline-mode` to true in `server.properties` (Currently the bridge runs on 1.8.8)
-3. Start the server with `yarn server`
-4. Run the bridge with `yarn dev` rather than `yarn start`
+2. Download the `1.17.1` Minecraft Server jar into the `server/` directory as `server.jar`
+3. Accept the EULA and set `offline-mode` to true in `server.properties`
+4. Start the server with `yarn server`
+5. Run the bridge with `yarn dev` rather than `yarn start`
 
 ### To do
 

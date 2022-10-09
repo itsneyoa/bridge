@@ -32,7 +32,7 @@ async function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
     if (member || author) prefix += ` ➜ ${member?.nickname ?? author.username}`
   }
 
-  let content = cleanContent(message.content, message.channel).trim()
+  let content = cleanContent(message.content, message.channel).replace(/\n+/g, ' ⤶ ').trim()
 
   const invalidContent = containsInvalidCharacters(content)
   const invalidPrefix = containsInvalidCharacters(prefix)
@@ -53,9 +53,16 @@ async function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
 
     if (invalidContent || invalidPrefix) message.react(Warnings.invalidMessage.emoji)
 
+    let command = `${commands[chat]} ${prefix}: ${content}`
+    if (command.length > bridge.minecraft.chatLengthLimit) {
+      log.add('chat', `Message is ${command.length} characters (${command.length - bridge.minecraft.chatLengthLimit} over the limit), trimming end`)
+      command = command.slice(0, bridge.minecraft.chatLengthLimit)
+      message.react(Warnings.invalidMessage.emoji)
+    }
+
     return bridge.minecraft.execute(
       {
-        command: `${commands[chat]} ${prefix}: ${content}`,
+        command,
         regex: [
           {
             exp: RegExp(`^(?:Guild|Officer) > (?:\\[.+?\\] )?${bridge.minecraft.username}(?: \\[.+?\\])?: ${prefix}: .*`),
