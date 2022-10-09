@@ -33,7 +33,7 @@ export default class Minecraft {
     const bot = mineflayerCreateBot({
       viewDistance: 'tiny',
       chatLengthLimit: 256,
-      version: '1.8.9',
+      version: '1.17.1',
       auth: this.bridge.config.devServerId ? undefined : 'microsoft',
       username: 'Bridge',
       defaultChatPatterns: false,
