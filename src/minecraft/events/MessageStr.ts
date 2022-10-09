@@ -11,8 +11,7 @@ const MessageStr: Event<'messagestr'> = {
   async execute(bridge, message /*, position, json*/) {
     const log = bridge.log.create('chat', message)
 
-    message = message.replaceAll(/-/g, '')
-    if (!message) return
+    if (message.match(/^-+$/)) return
 
     try {
       for (const exec of messages) {
@@ -34,7 +33,7 @@ const messages: Array<(message: string, bridge: Bridge, log: ReturnType<typeof b
       if (json['server'] == 'limbo') {
         log.add('info', `Minecraft bot successfully sent to limbo`)
       } else {
-        bridge.minecraft.priorityExecute('§')
+        bridge.minecraft.unsafeExecute('§', true)
         log.add('info', [`Lobby detected, sending to limbo`, ...Object.entries(json).map(([key, value]) => `${key}: ${inlineCode(String(value))}`)].join('\n'))
       }
       return true

@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, notInGuild, playerNotFound, unknownCommand } from '../../utils/CommonRegex'
+import { guildDefaults } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Promote: DiscordCommand = {
@@ -37,18 +37,15 @@ const Promote: DiscordCommand = {
                 embeds: [SimpleEmbed('success', `${inlineCode(username)} has been promoted from ${inlineCode(from)} to ${inlineCode(to)}`)]
               })
           },
-          notInGuild(interaction),
-          playerNotFound(interaction, user),
           {
-            exp: RegExp(`^(?:\\[.+?\\] )?(${user}) is already the highest rank you've created!$`, 'i'),
-            exec: ([, username]) => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(username)} is already the highest guild ran`)] })
+            exp: RegExp(`^(?:\\[.+?\\] )?(${user}) is already the highest rank you've created!-*$`, 'i'),
+            exec: ([, username]) => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(username)} is already the highest guild rank`)] })
           },
           {
-            exp: /^(?:You can only promote up to your own rank!|(?:\[.+?\] )?(\w+) is the guild master so can't be promoted anymore!)$/,
+            exp: /^(?:You can only promote up to your own rank!|(?:\[.+?\] )?(\w+) is the guild master so can't be promoted anymore!)-*$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `I don't have permission to do that`)] })
           },
-          noPermission(interaction),
-          unknownCommand(interaction)
+          ...guildDefaults(interaction, user)
         ],
         noResponse: noResponse(interaction)
       },

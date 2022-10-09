@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, notInGuild, playerNotFound, unknownCommand } from '../../utils/CommonRegex'
+import { guildDefaults } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Unmute: DiscordCommand = {
@@ -44,14 +44,11 @@ const Unmute: DiscordCommand = {
                 embeds: [SimpleEmbed('success', `Guild chat has been unmuted`)]
               })
           },
-          notInGuild(interaction),
-          playerNotFound(interaction, user),
           {
             exp: /^This player is not muted!$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(user)} is not muted`)] })
           },
-          noPermission(interaction),
-          unknownCommand(interaction)
+          ...guildDefaults(interaction, user)
         ],
         noResponse: noResponse(interaction)
       },

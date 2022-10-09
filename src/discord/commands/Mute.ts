@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, notInGuild, playerNotFound, unknownCommand } from '../../utils/CommonRegex'
+import { guildDefaults } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Mute: DiscordCommand = {
@@ -54,8 +54,6 @@ const Mute: DiscordCommand = {
                 embeds: [SimpleEmbed('success', `Guild chat has been muted for ${inlineCode(time)}`)]
               })
           },
-          notInGuild(interaction),
-          playerNotFound(interaction, user),
           {
             exp: /^This player is already muted!$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(user)} is already muted`)] })
@@ -68,12 +66,11 @@ const Mute: DiscordCommand = {
             exp: /^You cannot mute someone for less than a minute$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `Mute length too short`)] })
           },
-          noPermission(interaction),
           {
             exp: /^Invalid time format! Try 7d, 1d, 6h, 1h$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', 'Invalid mute length given')] })
           },
-          unknownCommand(interaction)
+          ...guildDefaults(interaction, user)
         ],
         noResponse: noResponse(interaction)
       },

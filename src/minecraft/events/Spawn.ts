@@ -23,7 +23,7 @@ const Spawn: Event<'spawn'> = {
       )
     }
 
-    bridge.minecraft.priorityExecute('/locraw')
+    bridge.minecraft.execute({ command: '/locraw' }, undefined, true)
     return bridge.minecraft.loop()
   }
 }

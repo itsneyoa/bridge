@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, notInGuild, playerNotFound, unknownCommand } from '../../utils/CommonRegex'
+import { guildDefaults } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const SetRank: DiscordCommand = {
@@ -50,8 +50,6 @@ const SetRank: DiscordCommand = {
                 ]
               })
           },
-          notInGuild(interaction),
-          playerNotFound(interaction, user),
           {
             exp: RegExp(`^I couldn't find a rank by the name of '(${rank})'!$`, 'i'),
             exec: ([, rank]) => interaction.editReply({ embeds: [SimpleEmbed('failure', `Couldn't find a rank by the name of ${inlineCode(rank)}`)] })
@@ -64,8 +62,7 @@ const SetRank: DiscordCommand = {
             exp: /^You can only (demote|promote) up to your own rank!$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `I don't have permission to do that`)] })
           },
-          noPermission(interaction),
-          unknownCommand(interaction)
+          ...guildDefaults(interaction, user)
         ],
         noResponse: noResponse(interaction)
       },

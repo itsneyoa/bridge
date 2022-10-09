@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { unknownCommand, noPermission, notInGuild, playerNotFound } from '../../utils/CommonRegex'
+import { guildDefaults } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Demote: DiscordCommand = {
@@ -37,18 +37,15 @@ const Demote: DiscordCommand = {
                 embeds: [SimpleEmbed('success', `${inlineCode(username)} has been demoted from ${inlineCode(from)} to ${inlineCode(to)}`)]
               })
           },
-          notInGuild(interaction),
-          playerNotFound(interaction, user),
           {
-            exp: RegExp(`^(?:\\[.+?\\] )?(${user}) is already the lowest rank you've created!$`, 'i'),
+            exp: RegExp(`^(?:\\[.+?\\] )?(${user}) is already the lowest rank you've created!-*$`, 'i'),
             exec: ([, username]) => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(username)} is already the lowest guild rank`)] })
           },
           {
-            exp: /^(?:You can only demote up to your own rank!|(?:\[.+?\] )?(\w+) is the guild master so can't be demoted!)$/,
+            exp: /^(?:You can only demote up to your own rank!|(?:\[.+?\] )?(\w+) is the guild master so can't be demoted!)-*$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `I don't have permission to do that`)] })
           },
-          noPermission(interaction),
-          unknownCommand(interaction)
+          ...guildDefaults(interaction, user)
         ],
         noResponse: noResponse(interaction)
       },

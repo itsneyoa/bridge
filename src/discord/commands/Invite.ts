@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, playerNotFound, unknownCommand } from '../../utils/CommonRegex'
+import { guildDefaults } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Invite: DiscordCommand = {
@@ -42,7 +42,6 @@ const Invite: DiscordCommand = {
             exp: RegExp(`^(?:\\[.+?\\] )?(${user}) is already in another guild!$`, 'i'),
             exec: ([, username]) => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(username)} is in another guild`)] })
           },
-          playerNotFound(interaction, user),
           {
             exp: RegExp(`^You've already invited (?:\\[.+?\\] )?(${user}) to your guild. Wait for them to accept!$`, 'i'),
             exec: ([, username]) => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(username)} already has a pending guild invite`)] })
@@ -59,8 +58,7 @@ const Invite: DiscordCommand = {
             exp: /^You cannot invite this player to your guild!$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(user)} has guild invites disabled`)] })
           },
-          noPermission(interaction),
-          unknownCommand(interaction)
+          ...guildDefaults(interaction, user)
         ],
         noResponse: noResponse(interaction)
       },

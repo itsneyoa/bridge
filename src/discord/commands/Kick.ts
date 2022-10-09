@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, inlineCode } from 'discord.js'
 import DiscordCommand, { noResponse } from '../../structs/DiscordCommand'
-import { noPermission, notInGuild, playerNotFound, unknownCommand } from '../../utils/CommonRegex'
+import { guildDefaults } from '../../utils/CommonRegex'
 import { SimpleEmbed } from '../../utils/Embed'
 
 const Kick: DiscordCommand = {
@@ -41,14 +41,11 @@ const Kick: DiscordCommand = {
             exp: RegExp(`^(?:\\[.+?\\] )?(${user}) was kicked from the guild by (?:\\[.+?\\] )?(${bridge.minecraft.username})!$`, 'i'),
             exec: ([, username]) => interaction.editReply({ embeds: [SimpleEmbed('success', `${inlineCode(username)} was kicked from the guild`)] })
           },
-          notInGuild(interaction),
-          playerNotFound(interaction, user),
-          noPermission(interaction),
           {
             exp: RegExp(`^Invalid usage! '\\/guild kick <player> <reason>'$`),
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', 'Missing reason')] })
           },
-          unknownCommand(interaction)
+          ...guildDefaults(interaction, user)
         ],
         noResponse: noResponse(interaction)
       },

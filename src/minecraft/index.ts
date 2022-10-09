@@ -79,25 +79,28 @@ export default class Minecraft {
     }, delay * 1000)
   }
 
-  public execute(fullCommand: CommandToRun, log: ReturnType<typeof this.bridge.log.create>) {
+  public execute(fullCommand: CommandToRun, log?: ReturnType<typeof this.bridge.log.create>, priority = false) {
     let command = fullCommand.command.trim()
     if (!command.startsWith('/')) command = '/' + command
 
     if (command.length > 256) {
       const warningMessage = `Command ${command} length is greater than 256, truncating`
-      log.add('error', warningMessage) ?? this.bridge.log.sendErrorLog(Error(warningMessage))
+      log?.add('error', warningMessage) ?? this.bridge.log.sendErrorLog(Error(warningMessage))
       command = command.slice(0, 256)
     }
 
-    this.queue.push(fullCommand)
-    const logMessage = `${inlineCode(command)} added to command queue - current position: ${inlineCode(this.queue.length.toString())}`
-    log.add('command', logMessage) ?? this.bridge.log.sendSingleLog('command', logMessage)
+    this.queue[priority ? 'unshift' : 'push'](fullCommand)
+    const logMessage = `${inlineCode(command)} added to command queue - current position: ${inlineCode(priority ? this.queue.length.toString() : '1')}`
+    log?.add('command', logMessage) ?? this.bridge.log.sendSingleLog('command', logMessage)
 
     this.loop()
   }
 
-  public priorityExecute(command: string) {
-    this.queue.unshift({ command })
+  public unsafeExecute(command: string, priority = false) {
+    this.queue[priority ? 'unshift' : 'push']({ command })
+    const logMessage = `${inlineCode(command)} added to command queue - current position: ${inlineCode(priority ? this.queue.length.toString() : '1')}`
+    this.bridge.log.sendSingleLog('command', logMessage)
+
     this.loop()
   }
 
@@ -118,16 +121,17 @@ export default class Minecraft {
       this.bot.chat(command)
 
       const response = await Promise.race([
-        this.bot.awaitMessage(...(regex ? regex.map(({ exp }) => exp) : [unknownCommand]), tooFast),
+        this.bot.awaitMessage(...(regex ? regex.map(({ exp }) => exp) : [unknownCommand, commandDisabled]), tooFast),
         sleep(10 * 1000)
       ])
 
       if (response) {
         if (response.match(unknownCommand)) this.bridge.log.sendSingleLog('error', `Command ${inlineCode(command)} not found`)
+        if (response.match(commandDisabled)) this.bridge.log.sendSingleLog('error', `Command ${inlineCode(command)} disabled`)
 
         if (response.match(tooFast)) {
-          sleep(0.5 * 1000) // Half a second
-          return this.priorityExecute(command)
+          await sleep(0.5 * 1000) // Half a second
+          return this.execute(currentCommand, undefined, true)
         }
 
         if (regex) {
@@ -160,3 +164,4 @@ export type ChatTrigger = { exp: RegExp; exec: (reason: RegExpMatchArray) => unk
 
 export const unknownCommand = /^Unknown command. Type "\/help" for help.$/
 export const tooFast = /^You are sending commands too fast! Please slow down.$/
+export const commandDisabled = /^This command is currently disabled.$/
