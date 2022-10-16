@@ -5,7 +5,7 @@ import Event from '../../structs/DiscordEvent'
 import cleanContent from '../../utils/CleanDiscordContent'
 import { unknownCommand } from '../../minecraft'
 import { Warnings } from '../../utils/Styles'
-import { cleanString, containsInvalidCharacters } from '../../utils/ValidMinecraftCharacters'
+import { cleanString } from '../../utils/ValidMinecraftCharacters'
 
 const MessageCreate: Event<'messageCreate'> = {
   name: 'messageCreate',
@@ -25,31 +25,16 @@ const MessageCreate: Event<'messageCreate'> = {
 }
 
 async function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
-  let prefix = message.member?.nickname ?? message.author.username
-
-  if (message.reference?.messageId) {
-    const { author, member } = await message.channel.messages.fetch(message.reference.messageId)
-    if (member || author) prefix += ` ➜ ${member?.nickname ?? author.username}`
-  }
-
-  let content = cleanContent(message.content, message.channel).replace(/\n+/g, ' ⤶ ').trim()
-
-  const invalidContent = containsInvalidCharacters(content)
-  const invalidPrefix = containsInvalidCharacters(prefix)
+  const [prefix, invalidPrefix] = (await fetchPrefix(message)) ?? 'Unknown'
+  const [content, invalidContent] = cleanString(cleanContent(message.content, message.channel).replace(/\n+/g, ' ⤶ '))
 
   const log = bridge.log.create('chat', `${inlineCode(prefix)}: ${inlineCode(content)}`)
 
   try {
-    if (invalidContent) content = cleanString(content)
-
     if (!content) {
       log.add('chat', 'Message had no content after clearning')
       return message.react(Warnings.emptyMessage.emoji)
     }
-
-    if (invalidPrefix) prefix = cleanString(prefix)
-
-    if (!prefix) prefix = 'Unknown'
 
     if (invalidContent || invalidPrefix) message.react(Warnings.invalidMessage.emoji)
 
@@ -96,6 +81,17 @@ async function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
   } finally {
     log.send()
   }
+}
+
+async function fetchPrefix(message: Message): Promise<[string, boolean]> {
+  let prefix = message.member?.nickname ?? message.author.username
+
+  if (message.reference?.messageId) {
+    const { author, member } = await message.channel.messages.fetch(message.reference.messageId)
+    if (member || author) prefix += ` ➜ ${member?.nickname ?? author.username}`
+  }
+
+  return cleanString(prefix)
 }
 
 const commands: { [key in Chat]: `/${string}` } = {
