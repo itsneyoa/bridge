@@ -1,5 +1,5 @@
 import { APIEmbed } from 'discord.js'
-import {Colours} from './Styles'
+import { Colours } from './Styles'
 
 export function SimpleEmbed(type: keyof typeof Colours, description: string): APIEmbed {
   return { color: Colours[type], description }
