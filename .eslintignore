@@ -14,3 +14,6 @@ server
 
 # Editor
 .vscode
+
+# Compiled TypeScript
+dist

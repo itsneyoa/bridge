@@ -1,4 +1,4 @@
-import { APIEmbed, Client, MessageOptions, inlineCode, Webhook, TextChannel } from 'discord.js'
+import { APIEmbed, Client, MessageCreateOptions, inlineCode, Webhook, TextChannel } from 'discord.js'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import Command from '../structs/DiscordCommand'
@@ -91,11 +91,11 @@ export default class Discord {
     }
   }
 
-  private async sendToChannel(content: MessageOptions, destination: string, webhookOptions?: webhookOptions) {
+  private async sendToChannel(content: MessageCreateOptions, destination: string, webhookOptions?: webhookOptions) {
     await this.isReady
     const channel = await this.client.channels.fetch(destination)
 
-    const payload: MessageOptions = { ...content, ...{ allowedMentions: { parse: [] } } }
+    const payload: MessageCreateOptions = { ...content, ...{ allowedMentions: { parse: [] } } }
 
     if (webhookOptions) {
       const { username, avatar } = webhookOptions
