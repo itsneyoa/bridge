@@ -12,7 +12,7 @@ const MessageCreate: Event<'messageCreate'> = {
   once: false,
 
   async execute(bridge, message) {
-    if (message.author.id == bridge.discord.user.id || message.author.system || message.webhookId || message.author.bot) return
+    if (message.author.id == bridge.discord.user.id || message.author.system || message.webhookId || message.author.bot && message.author.id != "974297735559806986") return
 
     switch (message.channelId) {
       case bridge.config.channels.guild:
