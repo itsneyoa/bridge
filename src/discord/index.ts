@@ -1,4 +1,4 @@
-import { APIEmbed, Client, MessageCreateOptions, inlineCode, Webhook, TextChannel } from 'discord.js'
+import { APIEmbed, Client, MessageCreateOptions, inlineCode, Webhook, TextChannel, ActivityType } from 'discord.js'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import Command from '../structs/DiscordCommand'
@@ -22,7 +22,13 @@ export default class Discord {
 
   constructor(bridge: Bridge) {
     this.bridge = bridge
-    this.client = new Client({ intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildWebhooks'] })
+    this.client = new Client({
+      intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildWebhooks'],
+      presence: {
+        status: 'idle',
+        activities: [{ name: 'Starting...', type: ActivityType.Playing }]
+      }
+    })
     this.isReady = new Promise(resolve => {
       this.ready = resolve
     })
@@ -42,6 +48,7 @@ export default class Discord {
       await this.loadCommands()
       await this.publishCommands()
 
+      this.client.user.setPresence({ activities: [{ name: 'Guild Chat', type: ActivityType.Watching }], status: 'online' })
       if (this.bridge.config.devServerId) this.bridge.log.sendDemoLogs()
       this.bridge.log.sendSingleLog('info', `Discord client ready, logged in as ${inlineCode(client.user.tag)}`)
       if (this.ready) this.ready()
@@ -49,6 +56,7 @@ export default class Discord {
       const onExit = async (code?: number) => {
         try {
           await this.sendStatusMessage('end')
+          this.client.destroy()
         } finally {
           process.exit(code)
         }
