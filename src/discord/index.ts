@@ -135,7 +135,7 @@ export default class Discord {
   }
 
   public async sendEmbed(embed: APIEmbed, destination: Chat | 'both', webhookOptions?: webhookOptions) {
-    if (destination == 'both') {
+    if (destination === 'both') {
       return await Promise.all([
         this.sendToChannel({ embeds: [embed] }, this.bridge.config.channels['guild'], webhookOptions),
         this.sendToChannel({ embeds: [embed] }, this.bridge.config.channels['officer'], webhookOptions)
@@ -163,7 +163,7 @@ export default class Discord {
   }
 
   private async fetchWebhook(channel: TextChannel) {
-    const webhook = (await channel.fetchWebhooks()).filter(channel => channel.owner?.id == this.client.user.id).first()
+    const webhook = (await channel.fetchWebhooks()).filter(channel => channel.owner?.id === this.client.user.id).first()
     if (webhook) {
       this.webhookCache[channel.id] = webhook
       this.bridge.log.sendSingleLog('info', `Webhook found in #${channel.name}`)
@@ -185,7 +185,7 @@ export default class Discord {
 
   private async sendStatusMessage(status: 'start' | 'end') {
     return await this.sendEmbed(
-      FullEmbed(status == 'start' ? 'success' : 'failure', { author: { name: `Chat Bridge is ${status == 'start' ? 'Online' : 'Offline'}` } }),
+      FullEmbed(status === 'start' ? 'success' : 'failure', { author: { name: `Chat Bridge is ${status === 'start' ? 'Online' : 'Offline'}` } }),
       'both'
     )
   }

@@ -30,7 +30,7 @@ const messages: Array<(message: string, bridge: Bridge, log: ReturnType<typeof b
       const json = JSON.parse(message)
       if (!json['server']) return false
 
-      if (json['server'] == 'limbo') {
+      if (json['server'] === 'limbo') {
         log.add('info', `Minecraft bot successfully sent to limbo`)
       } else {
         bridge.minecraft.unsafeExecute('§', true)
@@ -52,7 +52,7 @@ const messages: Array<(message: string, bridge: Bridge, log: ReturnType<typeof b
 
     if (username === bridge.minecraft.username) return false
 
-    if (chat != 'guild' && chat != 'officer') return false
+    if (chat !== 'guild' && chat !== 'officer') return false
 
     // Ingame commands can be added here if needed
 
@@ -70,7 +70,7 @@ const messages: Array<(message: string, bridge: Bridge, log: ReturnType<typeof b
     const [, username, status] = match
 
     log.add('event', `${username} ${status}.`)
-    bridge.discord.sendEmbed(SimpleEmbed(status == 'joined' ? 'success' : 'failure', `${username} ${status}.`), 'guild', { username, avatar: true })
+    bridge.discord.sendEmbed(SimpleEmbed(status === 'joined' ? 'success' : 'failure', `${username} ${status}.`), 'guild', { username, avatar: true })
     return true
   },
 
@@ -120,7 +120,7 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
         (['guild', 'officer'] as Chat[]).map(chat =>
           bridge.discord.sendEmbed(
             FullEmbed('failure', {
-              description: chat == 'officer' ? fullDescription : baseDescription,
+              description: chat === 'officer' ? fullDescription : baseDescription,
               author: { name: `Member Kicked!`, icon_url: headUrl(user) }
             }),
             chat
@@ -179,7 +179,7 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
       log.add('event', fullDescription)
       return Promise.all(
         (['guild', 'officer'] as Chat[]).map(chat =>
-          bridge.discord.sendEmbed(FullEmbed('failure', { description: chat == 'officer' ? fullDescription : baseDescription }), chat)
+          bridge.discord.sendEmbed(FullEmbed('failure', { description: chat === 'officer' ? fullDescription : baseDescription }), chat)
         )
       )
     }
@@ -194,7 +194,7 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
       log.add('event', fullDescription)
       return Promise.all(
         (['guild', 'officer'] as Chat[]).map(chat =>
-          bridge.discord.sendEmbed(FullEmbed('failure', { description: chat == 'officer' ? fullDescription : baseDescription }), chat)
+          bridge.discord.sendEmbed(FullEmbed('failure', { description: chat === 'officer' ? fullDescription : baseDescription }), chat)
         )
       )
     }

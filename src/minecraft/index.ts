@@ -62,7 +62,7 @@ export default class Minecraft {
 
     this.bridge.log.sendSingleLog('info', `Minecraft bot disconnected from the server! Relogging in ${inlineCode(delay.toString())} seconds.`)
 
-    if (this.lastStatusMessage == 'login') {
+    if (this.lastStatusMessage === 'login') {
       this.lastStatusMessage = 'logout'
       this.bridge.discord.sendEmbed(
         FullEmbed('failure', {

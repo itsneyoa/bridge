@@ -40,7 +40,7 @@ const InteractionCreate: Event<'interactionCreate'> = {
           }
           break
         case 'owner':
-          if (interaction.user.id != bridge.config.ownerId) {
+          if (interaction.user.id !== bridge.config.ownerId) {
             return interaction.reply({
               embeds: [SimpleEmbed('failure', [`You don't have permission to do that.`, `Required permission: <@!${bridge.config.ownerId}>`].join('\n'))],
               ephemeral: true

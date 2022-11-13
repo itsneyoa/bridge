@@ -5,5 +5,5 @@ export function cleanString(str: string): [string, boolean] {
 
   const cleanString = str.replace(regex, '')
 
-  return [cleanString.trim(), cleanString.length != str.length]
+  return [cleanString.trim(), cleanString.length !== str.length]
 }

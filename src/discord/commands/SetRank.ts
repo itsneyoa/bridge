@@ -44,7 +44,7 @@ const SetRank: DiscordCommand = {
               interaction.editReply({
                 embeds: [
                   SimpleEmbed(
-                    state == 'promoted' ? 'success' : 'failure',
+                    state === 'promoted' ? 'success' : 'failure',
                     `${inlineCode(username)} has been ${state} from ${inlineCode(from)} to ${inlineCode(to)}`
                   )
                 ]

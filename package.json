@@ -8,7 +8,7 @@
     "start": "tsc && node dist/index.js",
     "dev": "ts-node .",
     "server": "cd server && java -jar server.jar nogui",
-    "lint": "eslint --fix .",
+    "lint": "eslint .",
     "format": "prettier --write ."
   },
   "dependencies": {
@@ -47,6 +47,12 @@
       "eslint:recommended",
       "plugin:@typescript-eslint/recommended",
       "prettier"
-    ]
+    ],
+    "rules": {
+      "eqeqeq": [
+        "error",
+        "smart"
+      ]
+    }
   }
 }

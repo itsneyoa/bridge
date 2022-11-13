@@ -22,7 +22,7 @@ export default class Config {
 
     this.logChannel = this.resolveEnv('LOG_CHANNEL_ID', true)
 
-    const devMode = this.resolveEnv('npm_lifecycle_event', true) == 'dev'
+    const devMode = this.resolveEnv('npm_lifecycle_event', true) === 'dev'
     this.devServerId = this.resolveEnv('DEV_SERVER_ID', !devMode)
   }
 

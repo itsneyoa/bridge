@@ -10,7 +10,7 @@ const Spawn: Event<'spawn'> = {
     bridge.minecraft.loggedIn = true
     bridge.minecraft.relogAttempts = 0
 
-    if (bridge.minecraft.lastStatusMessage == 'logout') {
+    if (bridge.minecraft.lastStatusMessage === 'logout') {
       bridge.minecraft.lastStatusMessage = 'login'
       bridge.discord.sendEmbed(
         FullEmbed('success', {
