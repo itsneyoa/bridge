@@ -67,9 +67,9 @@ export default class Minecraft {
       this.bridge.discord.sendEmbed(
         FullEmbed('failure', {
           author: {
-            name: 'Chat Bridge is Offline'
+            name: 'Minecraft Bot has been Disconnected'
           },
-          description: [`I have been kicked from the server, attempting to reconnect`, `Last login: <t:${Math.floor(Date.now() / 1000)}:R>`].join('\n')
+          description: [`I have been kicked from the server, attempting to reconnect`].join('\n')
         }),
         'both'
       )

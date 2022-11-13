@@ -15,7 +15,7 @@ const Spawn: Event<'spawn'> = {
       bridge.discord.sendEmbed(
         FullEmbed('success', {
           author: {
-            name: 'Chat Bridge is Online'
+            name: 'Minecraft Bot is Connected'
           },
           description: `Connected as ${inlineCode(bridge.minecraft.username)} on version ${inlineCode(bridge.minecraft.version)}`
         }),

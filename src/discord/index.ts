@@ -2,10 +2,9 @@ import { APIEmbed, Client, MessageCreateOptions, inlineCode, Webhook, TextChanne
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import Command from '../structs/DiscordCommand'
-import Config from '../utils/Config'
 import Chat from '../structs/Chat'
 import Bridge from '../structs/Bridge'
-import { headUrl } from '../utils/Embed'
+import { FullEmbed, headUrl } from '../utils/Embed'
 
 export default class Discord {
   private readonly client: Client<true>
@@ -30,9 +29,9 @@ export default class Discord {
   }
 
   public async init() {
-    const config = new Config()
+    this.sendStatusMessage('start')
 
-    this.client.login(config.token)
+    this.client.login(this.bridge.config.token)
 
     this.client.once('ready', async client => {
       await Promise.all(
@@ -46,6 +45,20 @@ export default class Discord {
       if (this.bridge.config.devServerId) this.bridge.log.sendDemoLogs()
       this.bridge.log.sendSingleLog('info', `Discord client ready, logged in as ${inlineCode(client.user.tag)}`)
       if (this.ready) this.ready()
+
+      const onExit = async (code?: number) => {
+        try {
+          await this.sendStatusMessage('end')
+        } finally {
+          process.exit(code)
+        }
+      }
+
+      process.on('exit', onExit)
+      process.on('SIGINT', onExit)
+      process.on('SIGUSR1', onExit)
+      process.on('SIGUSR2', onExit)
+      process.on('uncaughtException', onExit)
     })
   }
 
@@ -103,7 +116,7 @@ export default class Discord {
         .send({ ...payload, username: username, avatarURL: avatar ? headUrl(username) : undefined })
         .catch(error => this.bridge.log.sendErrorLog(error))
     } else {
-      if (channel?.isTextBased() && this.client.isReady()) {
+      if (channel?.isTextBased()) {
         return await channel.send(payload).catch(error => this.bridge.log.sendErrorLog(error))
       }
     }
@@ -160,6 +173,13 @@ export default class Discord {
     this.webhookCache[channel.id] = webhook
     this.bridge.log.sendSingleLog('info', `Webhook created in #${channel.name}`)
     return webhook
+  }
+
+  private async sendStatusMessage(status: 'start' | 'end') {
+    return await this.sendEmbed(
+      FullEmbed(status == 'start' ? 'success' : 'failure', { author: { name: `Chat Bridge is ${status == 'start' ? 'Online' : 'Offline'}` } }),
+      'both'
+    )
   }
 }
 
