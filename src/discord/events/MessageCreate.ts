@@ -25,7 +25,7 @@ const MessageCreate: Event<'messageCreate'> = {
 }
 
 async function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
-  const [prefix, invalidPrefix] = (await fetchPrefix(message)) ?? 'Unknown'
+  const [prefix, invalidPrefix] = cleanString((await fetchPrefix(message)) ?? 'Unknown')
   const [content, invalidContent] = cleanString(cleanContent(message.content, message.channel).replace(/\n+/g, ' ⤶ '))
 
   const log = bridge.log.create('chat', `${inlineCode(prefix)}: ${inlineCode(content)}`)
@@ -83,7 +83,7 @@ async function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
   }
 }
 
-async function fetchPrefix(message: Message): Promise<[string, boolean]> {
+async function fetchPrefix(message: Message): Promise<string> {
   let prefix = message.member?.nickname ?? message.author.username
 
   if (message.reference?.messageId) {
@@ -91,7 +91,7 @@ async function fetchPrefix(message: Message): Promise<[string, boolean]> {
     if (member || author) prefix += ` ➜ ${member?.nickname ?? author.username}`
   }
 
-  return cleanString(prefix)
+  return prefix
 }
 
 const commands: { [key in Chat]: `/${string}` } = {
