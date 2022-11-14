@@ -27,6 +27,7 @@ export default function cleanContent(str: string, channel: Channel) {
       }
       default: {
         if (type.match(/^:\w+?:$/)) return type
+        if (type.match(/^a:\w+?:$/)) return type.slice(1)
         return match
       }
     }
