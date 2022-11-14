@@ -26,7 +26,12 @@ const MessageCreate: Event<'messageCreate'> = {
 
 async function handleMessage(bridge: Bridge, message: Message, chat: Chat) {
   const [prefix, invalidPrefix] = cleanString((await fetchPrefix(message)) ?? 'Unknown')
-  const [content, invalidContent] = cleanString(cleanContent(message.content, message.channel).replace(/\n+/g, ' ⤶ '))
+  const [content, invalidContent] = cleanString(cleanContent(fetchContent(message), message.channel).replace(/\n+/g, ' ⤶ '))
+
+  for (const attach of message.attachments.values()) {
+    console.log(attach)
+    attach.url
+  }
 
   const log = bridge.log.create('chat', `${inlineCode(prefix)}: ${inlineCode(content)}`)
 
@@ -92,6 +97,10 @@ async function fetchPrefix(message: Message): Promise<string> {
   }
 
   return prefix
+}
+
+function fetchContent(message: Message): string {
+  return [message.content, ...message.attachments.map(attachment => attachment.url)].join(' ')
 }
 
 const commands: { [key in Chat]: `/${string}` } = {
