@@ -3,9 +3,11 @@
   "packageManager": "yarn@3.2.4",
   "version": "1.2.4",
   "license": "CC BY-NC-SA 4.0",
+  "main": "dist/index.js",
   "private": true,
   "scripts": {
-    "start": "tsc && node dist/index.js",
+    "start": "node .",
+    "build": "tsc",
     "dev": "ts-node .",
     "server": "cd server && java -jar server.jar nogui",
     "lint": "eslint .",
