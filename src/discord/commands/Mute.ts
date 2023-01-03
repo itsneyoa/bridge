@@ -59,6 +59,10 @@ const Mute: DiscordCommand = {
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `${inlineCode(user)} is already muted`)] })
           },
           {
+            exp: /^You cannot mute a guild member with a higher guild rank!$/,
+            exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `I don't have permission to do that`)] })
+          },
+          {
             exp: /^You cannot mute someone for more than one month$/,
             exec: () => interaction.editReply({ embeds: [SimpleEmbed('failure', `Mute length too long`)] })
           },
