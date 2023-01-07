@@ -5,6 +5,7 @@ import Command from '../structs/DiscordCommand'
 import Chat from '../structs/Chat'
 import Bridge from '../structs/Bridge'
 import { FullEmbed, headUrl } from '../utils/Embed'
+import exitHook from 'async-exit-hook'
 
 export default class Discord {
   private readonly client: Client<true>
@@ -39,6 +40,15 @@ export default class Discord {
 
     this.client.login(this.bridge.config.token)
 
+    exitHook(async done => {
+      try {
+        if (this.client.isReady()) await this.sendStatusMessage('end')
+        this.client.destroy()
+      } finally {
+        done()
+      }
+    })
+
     this.client.once('ready', async client => {
       await Promise.all(
         [this.bridge.config.channels.guild, this.bridge.config.channels.officer, this.bridge.config.logChannel].map(id => id && this.resolveWebhook(id))
@@ -52,21 +62,6 @@ export default class Discord {
       if (this.bridge.config.devServerId) this.bridge.log.sendDemoLogs()
       this.bridge.log.sendSingleLog('info', `Discord client ready, logged in as ${inlineCode(client.user.tag)}`)
       if (this.ready) this.ready()
-
-      const onExit = async (code?: number) => {
-        try {
-          await this.sendStatusMessage('end')
-          this.client.destroy()
-        } finally {
-          process.exit(code)
-        }
-      }
-
-      process.on('exit', onExit)
-      process.on('SIGINT', onExit)
-      process.on('SIGUSR1', onExit)
-      process.on('SIGUSR2', onExit)
-      process.on('uncaughtException', onExit)
     })
   }
 

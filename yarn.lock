@@ -228,6 +228,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/async-exit-hook@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@types/async-exit-hook@npm:2.0.0"
+  checksum: 2cb39bd3e31bb41133b5adb6a589409524f706277782babad2ba6bb75bb28d734fd375f84f9852f0100cf5b8f3a3b20127fb9b153f7bc71e2f09bb682e1521ec
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:^7.0.9":
   version: 7.0.11
   resolution: "@types/json-schema@npm:7.0.11"
@@ -501,6 +508,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"async-exit-hook@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "async-exit-hook@npm:2.0.1"
+  checksum: b72cbdd19ea90fa33a3a57b0dbff83e4bf2f4e4acd70b2b3847a588f9f16a45d38590ee13f285375dd919c224f60fa58dc3d315a87678d3aa24ff686d1c0200a
+  languageName: node
+  linkType: hard
+
 "axios@npm:^0.21.1":
   version: 0.21.4
   resolution: "axios@npm:0.21.4"
@@ -547,9 +561,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "bridge@workspace:."
   dependencies:
+    "@types/async-exit-hook": ^2.0.0
     "@types/node": ^18.11.5
     "@typescript-eslint/eslint-plugin": ^5.41.0
     "@typescript-eslint/parser": ^5.41.0
+    async-exit-hook: ^2.0.1
     discord.js: ^14.6.0
     dotenv: ^16.0.3
     eslint: ^8.26.0
