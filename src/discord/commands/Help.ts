@@ -9,6 +9,7 @@ const Help: DiscordCommand = {
   options: [],
   permission: 'all',
   dmPermission: true,
+
   async execute(interaction, bridge) {
     const discordCommands = [...bridge.discord.commands.values()]
       .sort()

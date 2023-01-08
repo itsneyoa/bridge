@@ -8,6 +8,7 @@ const Reload: DiscordCommand = {
   options: [],
   permission: 'owner',
   dmPermission: true,
+  
   async execute(interaction, bridge) {
     const commands = await bridge.discord.loadCommands()
     await bridge.discord.publishCommands()

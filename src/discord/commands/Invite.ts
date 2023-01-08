@@ -18,6 +18,7 @@ const Invite: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
+
   async execute(interaction, bridge, log) {
     const user = interaction.options.getString('username')
 

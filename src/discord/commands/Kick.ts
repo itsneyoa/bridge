@@ -13,7 +13,8 @@ const Kick: DiscordCommand = {
       type: ApplicationCommandOptionType.String,
       minLength: 1,
       maxLength: 16,
-      required: true
+      required: true,
+      autocomplete: true
     },
     {
       name: 'reason',
@@ -24,6 +25,7 @@ const Kick: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
+
   async execute(interaction, bridge, log) {
     const user = interaction.options.getString('username')?.trim()
     const reason = interaction.options.getString('reason') ?? 'No reason specified'

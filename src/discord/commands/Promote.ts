@@ -13,11 +13,13 @@ const Promote: DiscordCommand = {
       type: ApplicationCommandOptionType.String,
       minLength: 1,
       maxLength: 16,
-      required: true
+      required: true,
+      autocomplete: true
     }
   ],
   permission: 'staff',
   dmPermission: false,
+
   async execute(interaction, bridge, log) {
     const user = interaction.options.getString('username')?.trim()
 

@@ -570,6 +570,7 @@ __metadata:
     dotenv: ^16.0.3
     eslint: ^8.26.0
     eslint-config-prettier: ^8.5.0
+    fuse.js: ^6.6.2
     mineflayer: ^4.5.1
     prettier: ^2.7.1
     prismarine-nbt: ^2.2.1
@@ -1066,6 +1067,13 @@ __metadata:
   version: 1.0.0
   resolution: "fs.realpath@npm:1.0.0"
   checksum: 99ddea01a7e75aa276c250a04eedeffe5662bce66c65c07164ad6264f9de18fb21be9433ead460e54cff20e31721c811f4fb5d70591799df5f85dce6d6746fd0
+  languageName: node
+  linkType: hard
+
+"fuse.js@npm:^6.6.2":
+  version: 6.6.2
+  resolution: "fuse.js@npm:6.6.2"
+  checksum: 17ae758ce205276ebd88bd9c9f088a100be0b4896abac9f6b09847151269d1690f41d7f98ff5813d4a58973162dbd99d0072ce807020fee6f9de60170f6b08eb
   languageName: node
   linkType: hard
 

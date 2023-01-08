@@ -5,6 +5,7 @@ import { FullEmbed } from '../utils/Embed'
 import { inlineCode } from 'discord.js'
 import { setTimeout as sleep } from 'timers/promises'
 import Bridge from '../structs/Bridge'
+import Fuse from 'fuse.js'
 
 export default class Minecraft {
   public readonly bridge: Bridge
@@ -152,6 +153,27 @@ export default class Minecraft {
       this.looping = false
       this.loop()
     }
+  }
+
+  private guildMembersSet = new Set<string>()
+  public guildMembers = {
+    fuse: new Fuse([...this.guildMembersSet]),
+    add: (...names: string[]) => {
+      for (const name of names) {
+        if (name === this.username || this.guildMembersSet.has(name)) continue
+        this.guildMembersSet.add(name)
+        this.guildMembers.fuse.add(name)
+      }
+    },
+    remove: (...names: string[]) => {
+      for (const name of names) {
+        this.guildMembersSet.delete(name)
+        this.guildMembers.fuse.remove(item => {
+          return item === name
+        })
+      }
+    },
+    get: () => this.guildMembersSet
   }
 }
 

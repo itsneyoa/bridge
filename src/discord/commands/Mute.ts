@@ -13,7 +13,8 @@ const Mute: DiscordCommand = {
       type: ApplicationCommandOptionType.String,
       minLength: 1,
       maxLength: 16,
-      required: true
+      required: true,
+      autocomplete: true
     },
     {
       name: 'time',
@@ -26,6 +27,7 @@ const Mute: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
+
   async execute(interaction, bridge, log) {
     const user = interaction.options.getString('username')?.trim()
     const time = interaction.options.getString('time')?.replace(/\s/g, '')
@@ -49,7 +51,7 @@ const Mute: DiscordCommand = {
           },
           {
             exp: RegExp(`^(?:\\[.+?\\] )?(?:${bridge.minecraft.username}) has muted the guild chat for (\\d+\\w)$`),
-            exec: () =>
+            exec: ([, time]) =>
               interaction.editReply({
                 embeds: [SimpleEmbed('success', `Guild chat has been muted for ${inlineCode(time)}`)]
               })

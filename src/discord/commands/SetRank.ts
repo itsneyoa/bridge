@@ -13,7 +13,8 @@ const SetRank: DiscordCommand = {
       type: ApplicationCommandOptionType.String,
       minLength: 1,
       maxLength: 16,
-      required: true
+      required: true,
+      autocomplete: true
     },
     {
       name: 'rank',
@@ -24,6 +25,7 @@ const SetRank: DiscordCommand = {
   ],
   permission: 'staff',
   dmPermission: false,
+
   async execute(interaction, bridge, log) {
     const user = interaction.options.getString('username')?.trim()
     const rank = interaction.options.getString('rank')?.trim()

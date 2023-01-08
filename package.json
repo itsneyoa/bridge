@@ -1,14 +1,14 @@
 {
   "name": "bridge",
   "packageManager": "yarn@3.2.4",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "license": "CC BY-NC-SA 4.0",
   "main": "dist/index.js",
   "private": true,
   "scripts": {
     "start": "node .",
     "build": "tsc",
-    "dev": "ts-node .",
+    "dev": "ts-node index.ts",
     "server": "cd server && java -jar server.jar nogui",
     "lint": "eslint .",
     "format": "prettier --write ."
@@ -17,6 +17,7 @@
     "async-exit-hook": "^2.0.1",
     "discord.js": "^14.6.0",
     "dotenv": "^16.0.3",
+    "fuse.js": "^6.6.2",
     "mineflayer": "^4.5.1",
     "prismarine-nbt": "^2.2.1"
   },

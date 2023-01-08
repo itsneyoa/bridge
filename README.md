@@ -13,7 +13,15 @@
 - Git
 - Yarn (Installed with Node.js, run `corepack enable`)
 - A Minecraft account
-- A Discord bot with permissions "Manage Webhooks", "View Channels", "Add Reactions" and "Send Mesaages", and scope "bot" and "applications.commands"
+- A Discord bot:
+  - Permissions needed:
+    - `Manage Webhooks`
+    - `View Channels`
+    - `Add Reactions`
+    - `Send Mesaages`
+  - Scopes needed:
+    - `bot`
+    - `applications.commands`
 
 ### Setup
 
@@ -26,6 +34,7 @@
     git clone https://github.com/itsneyoa/bridge.git # Clone the repo
     cd bridge # Change directory to the project folder
     yarn install # Install dependencies
+    yarn build # Compile the typescript into javascript
     cp .env.example .env # Create the config file
     nano .env # Populate the config values
     yarn start # Start the bridge

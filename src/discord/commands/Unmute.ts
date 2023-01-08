@@ -13,7 +13,8 @@ const Unmute: DiscordCommand = {
       type: ApplicationCommandOptionType.String,
       minLength: 1,
       maxLength: 16,
-      required: true
+      required: true,
+      autocomplete: true
     }
   ],
   permission: 'staff',

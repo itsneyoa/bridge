@@ -52,6 +52,8 @@ const messages: Array<(message: string, bridge: Bridge, log: ReturnType<typeof b
 
     if (username === bridge.minecraft.username) return false
 
+    bridge.minecraft.guildMembers.add(username)
+
     if (chat !== 'guild' && chat !== 'officer') return false
 
     // Ingame commands can be added here if needed
@@ -68,6 +70,8 @@ const messages: Array<(message: string, bridge: Bridge, log: ReturnType<typeof b
     if (!match) return false
 
     const [, username, status] = match
+
+    bridge.minecraft.guildMembers.add(username)
 
     log.add('event', `${username} ${status}.`)
     bridge.discord.sendEmbed(SimpleEmbed(status === 'joined' ? 'success' : 'failure', `${username} ${status}.`), 'guild', { username, avatar: true })
@@ -93,6 +97,8 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
   [
     /^(?:\[.+?\] )?(\w+) joined the guild!$/,
     ([, user], bridge, log) => {
+      bridge.minecraft.guildMembers.add(user)
+
       const description = `${inlineCode(user)} joined the guild`
       log.add('event', description)
       return bridge.discord.sendEmbed(FullEmbed('success', { description, author: { name: `Member Joined!`, icon_url: headUrl(user) } }), 'both')
@@ -103,6 +109,8 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
   [
     /^(?:\[.+?\] )?(\w+) left the guild!$/,
     ([, user], bridge, log) => {
+      bridge.minecraft.guildMembers.remove(user)
+
       const description = `${inlineCode(user)} left the guild`
       log.add('event', description)
       return bridge.discord.sendEmbed(FullEmbed('failure', { description, author: { name: `Member Left!`, icon_url: headUrl(user) } }), 'both')
@@ -113,6 +121,9 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
   [
     /^(?:\[.+?\] )?(\w+) was kicked from the guild by (?:\[.+?\] )?(\w+)!$/,
     ([, user, by], bridge, log) => {
+      bridge.minecraft.guildMembers.remove(user)
+      bridge.minecraft.guildMembers.add(by)
+
       const baseDescription = `${inlineCode(user)} was kicked from the guild`
       const fullDescription = [baseDescription, `by ${inlineCode(by)}`].join(' ')
       log.add('event', fullDescription)
@@ -134,6 +145,8 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
   [
     /^(?:\[.+?\] )?(\w+) was promoted from (.+) to (.+)$/,
     ([, user, from, to], bridge, log) => {
+      bridge.minecraft.guildMembers.add(user)
+
       const description = `${inlineCode(user)} was promoted from ${inlineCode(from)} to ${inlineCode(to)}`
       log.add('event', description)
       return bridge.discord.sendEmbed(FullEmbed('success', { description }), 'both')
@@ -144,6 +157,8 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
   [
     /^(?:\[.+?\] )?(\w+) was demoted from (.+) to (.+)$/,
     ([, user, from, to], bridge, log) => {
+      bridge.minecraft.guildMembers.add(user)
+
       const description = `${inlineCode(user)} was demoted from ${inlineCode(from)} to ${inlineCode(to)}`
       log.add('event', description)
       return bridge.discord.sendEmbed(FullEmbed('failure', { description }), 'both')
@@ -154,6 +169,8 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
   [
     /^(?:\[.+?\] )?(\w+) has muted (?:\[.+?\] )?(\w+) for (\w+)$/,
     ([, by, user, time], bridge, log) => {
+      bridge.minecraft.guildMembers.add(user, by)
+
       const description = `${inlineCode(user)} has been muted for ${inlineCode(time)} by ${inlineCode(by)}`
       log.add('event', description)
       return bridge.discord.sendEmbed(FullEmbed('failure', { description }), 'officer')
@@ -164,6 +181,8 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
   [
     /^(?:\[.+?\] )?(\w+) has unmuted (?:\[.+?\] )?(\w+)$/,
     ([, by, user], bridge, log) => {
+      bridge.minecraft.guildMembers.add(user, by)
+
       const description = `${inlineCode(user)} has been unmuted by ${inlineCode(by)}`
       log.add('event', description)
       return bridge.discord.sendEmbed(FullEmbed('success', { description }), 'officer')
@@ -174,6 +193,8 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
   [
     /^(?:\[.+?\] )?(\w+) has muted the guild chat for (\w+)$/,
     ([, by, time], bridge, log) => {
+      bridge.minecraft.guildMembers.add(by)
+
       const baseDescription = `Guild Chat has been muted for ${inlineCode(time)}`
       const fullDescription = [baseDescription, `by ${inlineCode(by)}`].join(' ')
       log.add('event', fullDescription)
@@ -189,6 +210,8 @@ const events: Array<[RegExp, (match: RegExpMatchArray, bridge: Bridge, log: Retu
   [
     /^(?:\[.+?\] )?(\w+) has unmuted the guild chat!$/,
     ([, by], bridge, log) => {
+      bridge.minecraft.guildMembers.add(by)
+
       const baseDescription = `Guild Chat has been unmuted`
       const fullDescription = [baseDescription, `by ${inlineCode(by)}`].join(' ')
       log.add('event', fullDescription)

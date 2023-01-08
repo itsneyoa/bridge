@@ -15,6 +15,7 @@ const Execute: DiscordCommand = {
   ],
   permission: 'owner',
   dmPermission: false,
+
   async execute(interaction, bridge, log) {
     let command = interaction.options.getString('command')?.trim()
 
