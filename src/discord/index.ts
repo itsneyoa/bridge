@@ -184,6 +184,20 @@ export default class Discord {
       'both'
     )
   }
+
+  public async sendAuthCode({ code, link, expiresAt }: { code: string; link: string; expiresAt: number }) {
+    await this.isReady
+
+    const embed = FullEmbed('warning', {
+      author: { name: `Sign in to Minecraft`, icon_url: this.client.user.avatarURL() ?? undefined },
+      description: `Please go to ${link} and enter code ${inlineCode(code)} to authenticate. This code will expire <t:${expiresAt}:R>.`
+    })
+
+    this.client.users.send(this.bridge.config.ownerId, { embeds: [embed] }).catch(async () => {
+      const channel = await this.client.channels.fetch(this.bridge.config.channels.officer)
+      if (channel?.isTextBased()) channel.send({ embeds: [embed], content: `<@!${this.bridge.config.ownerId}>` })
+    })
+  }
 }
 
 type webhookOptions = { username: string; avatar?: boolean }
