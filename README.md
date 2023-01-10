@@ -5,7 +5,9 @@
 [![CodeFactor](https://img.shields.io/codefactor/grade/github/itsneyoa/bridge/main?style=for-the-badge)](https://www.codefactor.io/repository/github/itsneyoa/bridge)
 [![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-green?logo=creativecommons&style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1)
 
-## Installation
+## Deploying
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/cu1ASy?referralCode=VDbCD2)
 
 ### Requirements
 
