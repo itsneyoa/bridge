@@ -40,7 +40,6 @@ export default class Minecraft {
       username: 'Bridge',
       defaultChatPatterns: false,
       host: this.bridge.config.devServerId ? 'localhost' : 'mc.hypixel.io',
-      profilesFolder: './.minecraft/profiles',
       onMsaCode: ({ user_code: code, verification_uri: link, expires_in, message }) => {
         this.bridge.discord.sendAuthCode({ code, link, expiresAt: Math.floor(Date.now() / 1000 + expires_in) })
         this.bridge.log.sendSingleLog('info', message)
