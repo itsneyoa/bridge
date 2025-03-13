@@ -1,3 +1,3 @@
-type Chat = 'guild' | 'officer'
+type Chat = "guild" | "officer";
 
-export default Chat
+export default Chat;

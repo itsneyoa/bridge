@@ -1,13 +1,13 @@
-import Event from '../../structs/MinecraftEvent'
+import type Event from "../../structs/MinecraftEvent";
 
-const End: Event<'end'> = {
-  name: 'end',
-  once: false,
+const End: Event<"end"> = {
+	name: "end",
+	once: false,
 
-  async execute(bridge) {
-    bridge.minecraft.loggedIn = false
-    bridge.minecraft.refreshBot()
-  }
-}
+	async execute(bridge) {
+		bridge.minecraft.loggedIn = false;
+		bridge.minecraft.refreshBot();
+	},
+};
 
-export default End
+export default End;
