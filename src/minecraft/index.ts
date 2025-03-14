@@ -6,12 +6,13 @@ import Fuse from "fuse.js";
 import { type Bot, createBot as mineflayerCreateBot } from "mineflayer";
 import type Bridge from "../structs/Bridge";
 import { FullEmbed } from "../utils/Embed";
+import * as events from "./events";
 
 export default class Minecraft {
 	public readonly bridge: Bridge;
 	private readonly queue: Array<CommandToRun> = [];
 	private looping = false;
-	private bot: Bot;
+	private bot?: Bot;
 	public lastStatusMessage: "logout" | "login" = "logout";
 	public relogAttempts = 0;
 	public loggedIn = false;
@@ -19,24 +20,32 @@ export default class Minecraft {
 
 	constructor(bridge: Bridge) {
 		this.bridge = bridge;
+	}
 
+	public start() {
 		this.bot = this.createBot();
 	}
 
 	public get username() {
-		return this.bot.username;
+		return this.bot?.username;
 	}
 
 	public get version() {
-		return this.bot.version;
+		return this.bot?.version;
 	}
 
 	private createBot() {
+		const auth = this.bridge.config.devServerId ? "offline" : "microsoft";
+
+		this.bridge.log.sendSingleLog(
+			"info",
+			`Connecting to ${this.bridge.config.serverIp} with ${auth} auth`,
+		);
 		const bot = mineflayerCreateBot({
 			viewDistance: "tiny",
 			chatLengthLimit: this.chatLengthLimit,
-			version: "1.17.1",
-			auth: this.bridge.config.devServerId ? undefined : "microsoft",
+			version: "1.18.2",
+			auth,
 			username: "Bridge",
 			defaultChatPatterns: false,
 			host: this.bridge.config.serverIp,
@@ -56,26 +65,13 @@ export default class Minecraft {
 			},
 		});
 
-		this.registerEvents(bot);
-
-		return bot;
-	}
-
-	private async registerEvents(bot: Bot) {
-		let c = 0;
-		for (const path of readdirSync(join(__dirname, "events")).map((fileName) =>
-			join(__dirname, "events", fileName),
-		)) {
-			const event = (await import(path)).default;
+		for (const event of Object.values(events)) {
 			bot[event.once ? "once" : "on"](event.name, (...args: never[]) =>
 				event.execute(this.bridge, ...args),
 			);
-			c++;
 		}
-		this.bridge.log.sendSingleLog(
-			"info",
-			`${inlineCode(c.toString())} Minecraft events loaded`,
-		);
+
+		return bot;
 	}
 
 	public refreshBot() {
@@ -143,6 +139,8 @@ export default class Minecraft {
 			this.looping = false;
 			return;
 		}
+
+		if (!this.bot) throw new Error("Bot is undefined");
 
 		try {
 			this.looping = true;

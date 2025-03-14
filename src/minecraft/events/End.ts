@@ -1,13 +1,15 @@
 import type Event from "../../structs/MinecraftEvent";
 
-const End: Event<"end"> = {
+export const End: Event<"end"> = {
 	name: "end",
 	once: false,
 
-	async execute(bridge) {
+	async execute(bridge, reason) {
+		bridge.log.sendSingleLog(
+			"error",
+			`Disconnected from Minecraft server: ${reason}`,
+		);
 		bridge.minecraft.loggedIn = false;
 		bridge.minecraft.refreshBot();
 	},
 };
-
-export default End;

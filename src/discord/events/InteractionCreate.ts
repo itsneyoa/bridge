@@ -2,7 +2,7 @@ import { GuildMemberRoleManager, inlineCode } from "discord.js";
 import type Event from "../../structs/DiscordEvent";
 import { SimpleEmbed } from "../../utils/Embed";
 
-const InteractionCreate: Event<"interactionCreate"> = {
+export const InteractionCreate: Event<"interactionCreate"> = {
 	name: "interactionCreate",
 	once: false,
 
@@ -124,5 +124,3 @@ const InteractionCreate: Event<"interactionCreate"> = {
 		}
 	},
 };
-
-export default InteractionCreate;

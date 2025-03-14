@@ -4,7 +4,7 @@ import { noResponse } from "../../structs/DiscordCommand";
 import { guildDefaults } from "../../utils/CommonRegex";
 import { SimpleEmbed } from "../../utils/Embed";
 
-const Promote: DiscordCommand = {
+export const Promote: DiscordCommand = {
 	name: "promote",
 	description: "Promotes the given user by one guild rank",
 	options: [
@@ -86,5 +86,3 @@ const Promote: DiscordCommand = {
 		);
 	},
 };
-
-export default Promote;

@@ -4,7 +4,7 @@ import { noResponse } from "../../structs/DiscordCommand";
 import { guildDefaults } from "../../utils/CommonRegex";
 import { SimpleEmbed } from "../../utils/Embed";
 
-const Unmute: DiscordCommand = {
+export const Unmute: DiscordCommand = {
 	name: "unmute",
 	description: "Unmutes the given user",
 	options: [
@@ -79,5 +79,3 @@ const Unmute: DiscordCommand = {
 		);
 	},
 };
-
-export default Unmute;

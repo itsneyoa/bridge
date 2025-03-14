@@ -3,13 +3,14 @@
 		"label": "Minecraft Server",
 		"command": "java",
 		"args": ["-jar", "server.jar", "nogui"],
-		"cwd": "./server"
+		"cwd": "$ZED_WORKTREE_ROOT/server"
 	},
 	{
 		"label": "Bridge",
 		"command": "bun",
 		"args": ["dev"],
 		"reveal": "always",
-		"hide": "on_success"
+		"hide": "on_success",
+		"env": { "NODE_ENV": "development" }
 	}
 ]

@@ -1,17 +1,14 @@
 # Dependencies
-.yarn/*
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/releases
-.pnp.*
 node_modules
 
 # Secrets
 .env
+.env.*
+!.env.example
 .minecraft
 
 # Testing server
 server
 
-# Compiled TypeScript
-dist
+# Build
+build

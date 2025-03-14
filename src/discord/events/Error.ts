@@ -1,7 +1,7 @@
 import { codeBlock } from "discord.js";
 import type Event from "../../structs/DiscordEvent";
 
-const DiscordError: Event<"error"> = {
+export const DiscordError: Event<"error"> = {
 	name: "error",
 	once: false,
 
@@ -16,5 +16,3 @@ const DiscordError: Event<"error"> = {
 		}
 	},
 };
-
-export default DiscordError;

@@ -1,10 +1,9 @@
-import { readdirSync } from "node:fs";
-import { join } from "node:path";
 import exitHook from "async-exit-hook";
 import {
 	type APIEmbed,
 	ActivityType,
 	Client,
+	type ClientEvents,
 	type MessageCreateOptions,
 	TextChannel,
 	type Webhook,
@@ -13,7 +12,10 @@ import {
 import type Bridge from "../structs/Bridge";
 import type Chat from "../structs/Chat";
 import type Command from "../structs/DiscordCommand";
+import type DiscordEvent from "../structs/DiscordEvent";
 import { FullEmbed, headUrl } from "../utils/Embed";
+import * as commands from "./commands";
+import * as events from "./events";
 
 export default class Discord {
 	private readonly client: Client<true>;
@@ -66,8 +68,20 @@ export default class Discord {
 				].map((id) => id && this.resolveWebhook(id)),
 			);
 
-			await this.registerEvents();
-			await this.loadCommands();
+			// Register events
+			for (const event of Object.values(events)) {
+				this.client[event.once ? "once" : "on"](
+					event.name,
+					(...args: unknown[]) =>
+						event.execute(this.bridge, ...(args as never[])),
+				);
+			}
+
+			// Load commands
+			for (const command of Object.values(commands)) {
+				if (this.bridge.config.devServerId) command.description += " (Dev)";
+				this.commands.set(command.name, command);
+			}
 			await this.publishCommands();
 
 			this.client.user.setPresence({
@@ -81,42 +95,6 @@ export default class Discord {
 			);
 			if (this.ready) this.ready();
 		});
-	}
-
-	private async registerEvents() {
-		let c = 0;
-		for (const path of readdirSync(join(__dirname, "events")).map((fileName) =>
-			join(__dirname, "events", fileName),
-		)) {
-			const event = (await import(path)).default;
-			this.client[event.once ? "once" : "on"](event.name, (...args) =>
-				event.execute(this.bridge, ...args),
-			);
-			c++;
-		}
-		this.bridge.log.sendSingleLog(
-			"info",
-			`${inlineCode(c.toString())} Discord events loaded`,
-		);
-	}
-
-	public async loadCommands() {
-		this.commands.clear();
-		let c = 0;
-		for (const path of readdirSync(join(__dirname, "commands")).map(
-			(fileName) => join(__dirname, "commands", fileName),
-		)) {
-			delete require.cache[path];
-			const command: Command = (await import(path)).default;
-			if (this.bridge.config.devServerId) command.description += " (Dev)";
-			this.commands.set(command.name, command);
-			c++;
-		}
-		this.bridge.log.sendSingleLog(
-			"info",
-			`${inlineCode(c.toString())} Discord commands loaded`,
-		);
-		return c;
 	}
 
 	public async publishCommands() {

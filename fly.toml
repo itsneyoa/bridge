@@ -1,0 +1,17 @@
+app = 'chat-bridge'
+primary_region = 'iad'
+
+[env]
+OWNER_ID = '347762788921376769'
+GUILD_CHANNEL_ID = '809401859781558303'
+OFFICER_CHANNEL_ID = '861646608713908238'
+STAFF_ROLE_ID = '721047017425731685'
+
+[[mounts]]
+source = 'auth'
+destination = '/.minecraft'
+
+[[vm]]
+memory = '1gb'
+cpu_kind = 'shared'
+cpus = 1

@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, inlineCode } from "discord.js";
 import type DiscordCommand from "../../structs/DiscordCommand";
 import { SimpleEmbed } from "../../utils/Embed";
 
-const Execute: DiscordCommand = {
+export const Execute: DiscordCommand = {
 	name: "execute",
 	description: "Executes the given command as the minecraft bot",
 	options: [
@@ -32,5 +32,3 @@ const Execute: DiscordCommand = {
 		});
 	},
 };
-
-export default Execute;

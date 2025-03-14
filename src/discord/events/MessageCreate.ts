@@ -7,7 +7,7 @@ import cleanContent from "../../utils/CleanDiscordContent";
 import { Warnings } from "../../utils/Styles";
 import { cleanString } from "../../utils/ValidMinecraftCharacters";
 
-const MessageCreate: Event<"messageCreate"> = {
+export const MessageCreate: Event<"messageCreate"> = {
 	name: "messageCreate",
 	once: false,
 
@@ -131,5 +131,3 @@ const commands: { [key in Chat]: `/${string}` } = {
 	guild: "/gc",
 	officer: "/oc",
 };
-
-export default MessageCreate;

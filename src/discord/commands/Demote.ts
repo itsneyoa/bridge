@@ -4,7 +4,7 @@ import { noResponse } from "../../structs/DiscordCommand";
 import { guildDefaults } from "../../utils/CommonRegex";
 import { SimpleEmbed } from "../../utils/Embed";
 
-const Demote: DiscordCommand = {
+export const Demote: DiscordCommand = {
 	name: "demote",
 	description: "Demotes the given user by one guild rank",
 	options: [
@@ -86,5 +86,3 @@ const Demote: DiscordCommand = {
 		);
 	},
 };
-
-export default Demote;

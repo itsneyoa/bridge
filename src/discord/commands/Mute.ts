@@ -4,7 +4,7 @@ import { noResponse } from "../../structs/DiscordCommand";
 import { guildDefaults } from "../../utils/CommonRegex";
 import { SimpleEmbed } from "../../utils/Embed";
 
-const Mute: DiscordCommand = {
+export const Mute: DiscordCommand = {
 	name: "mute",
 	description: "Mutes the given user for the given time period",
 	options: [
@@ -132,5 +132,3 @@ const Mute: DiscordCommand = {
 		);
 	},
 };
-
-export default Mute;

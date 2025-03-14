@@ -4,7 +4,7 @@ import { noResponse } from "../../structs/DiscordCommand";
 import { guildDefaults } from "../../utils/CommonRegex";
 import { SimpleEmbed } from "../../utils/Embed";
 
-const SetRank: DiscordCommand = {
+export const SetRank: DiscordCommand = {
 	name: "setrank",
 	description: "Sets the given users guild rank to the given value",
 	options: [
@@ -109,5 +109,3 @@ const SetRank: DiscordCommand = {
 		);
 	},
 };
-
-export default SetRank;

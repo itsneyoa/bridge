@@ -1,0 +1,17 @@
+.git
+.gitignore
+.dockerignore
+.jj
+.vscode
+.zed
+
+.env
+.env.*
+
+build
+node_modules
+server
+
+Dockerfile*
+README.md
+LICENSE

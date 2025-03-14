@@ -1,9 +1,10 @@
 import { type APIEmbed, inlineCode } from "discord.js";
+import { version } from "../../../package.json";
 import type DiscordCommand from "../../structs/DiscordCommand";
 import { headUrl } from "../../utils/Embed";
 import { Warnings } from "../../utils/Styles";
 
-const Help: DiscordCommand = {
+export const Help: DiscordCommand = {
 	name: "help",
 	description: "Shows help for the bot!",
 	options: [],
@@ -43,7 +44,7 @@ const Help: DiscordCommand = {
 						`Guild Channel: <#${bridge.config.channels.guild}>`,
 						`Officer Channel: <#${bridge.config.channels.officer}>`,
 						`Staff Role: <@&${bridge.config.staffRole}>`,
-						`Version: ${inlineCode(process.env.npm_package_version ?? "Unknown")}`,
+						`Version: ${inlineCode(version)}`,
 					].join("\n"),
 				},
 			],
@@ -57,5 +58,3 @@ const Help: DiscordCommand = {
 		return interaction.editReply({ embeds: [embed] });
 	},
 };
-
-export default Help;

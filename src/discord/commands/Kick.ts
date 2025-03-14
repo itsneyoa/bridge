@@ -4,7 +4,7 @@ import { noResponse } from "../../structs/DiscordCommand";
 import { guildDefaults } from "../../utils/CommonRegex";
 import { SimpleEmbed } from "../../utils/Embed";
 
-const Kick: DiscordCommand = {
+export const Kick: DiscordCommand = {
 	name: "kick",
 	description: "Kicks the given user from the guild for the given reason",
 	options: [
@@ -77,5 +77,3 @@ const Kick: DiscordCommand = {
 		);
 	},
 };
-
-export default Kick;

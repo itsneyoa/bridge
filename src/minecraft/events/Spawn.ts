@@ -2,7 +2,7 @@ import { inlineCode } from "discord.js";
 import type Event from "../../structs/MinecraftEvent";
 import { FullEmbed } from "../../utils/Embed";
 
-const Spawn: Event<"spawn"> = {
+export const Spawn: Event<"spawn"> = {
 	name: "spawn",
 	once: false,
 
@@ -17,14 +17,14 @@ const Spawn: Event<"spawn"> = {
 					author: {
 						name: "Minecraft Bot is Connected",
 					},
-					description: `Connected as ${inlineCode(bridge.minecraft.username)} on version ${inlineCode(bridge.minecraft.version)}`,
+					description: `Connected as ${inlineCode(bridge.minecraft.username ?? "Unknown")} on version ${inlineCode(bridge.minecraft.version ?? "Unknown")}`,
 				}),
 				"both",
 			);
 		}
 
 		bridge.minecraft.execute({ command: "/locraw" }, undefined, true);
-		return bridge.minecraft.loop();
+		bridge.minecraft.loop();
 	},
 };
 

@@ -14,7 +14,10 @@ export default class Config {
 
 	constructor(dev: boolean) {
 		this.token = this.resolveEnv("DISCORD_TOKEN");
-		this.serverIp = this.resolveEnv("SERVER_IP", true) ?? "mc.hypixel.net";
+		this.serverIp =
+			(this.resolveEnv("SERVER_IP", true) ?? dev)
+				? "localhost"
+				: "mc.hypixel.net";
 		this.ownerId = this.resolveEnv("OWNER_ID");
 		this.channels = {
 			guild: this.resolveEnv("GUILD_CHANNEL_ID"),
@@ -24,7 +27,9 @@ export default class Config {
 
 		this.logChannel = this.resolveEnv("LOG_CHANNEL_ID", true);
 
-		this.devServerId = this.resolveEnv("DEV_SERVER_ID", !dev);
+		if (dev) {
+			this.devServerId = this.resolveEnv("DEV_SERVER_ID");
+		}
 	}
 
 	private resolveEnv<Optional extends boolean = false>(

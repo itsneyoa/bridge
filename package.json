@@ -5,15 +5,14 @@
 	"license": "CC BY-NC-SA 4.0",
 	"private": true,
 	"scripts": {
-		"dev": "bun --bun dev.ts",
-		"start": "bun --bun index.ts",
+		"dev": "NODE_ENV=development bun --bun src/index.ts",
+		"start": "NODE_ENV=production bun --bun src/index.ts",
 		"check": "biome check",
 		"format": "biome format --write"
 	},
 	"dependencies": {
 		"async-exit-hook": "^2.0.1",
 		"discord.js": "^14.18.0",
-		"dotenv": "^16.4.7",
 		"fuse.js": "^7.1.0",
 		"mineflayer": "^4.26.0",
 		"prismarine-nbt": "^2.7.0"

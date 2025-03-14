@@ -4,7 +4,7 @@ import { noResponse } from "../../structs/DiscordCommand";
 import { guildDefaults } from "../../utils/CommonRegex";
 import { SimpleEmbed } from "../../utils/Embed";
 
-const Invite: DiscordCommand = {
+export const Invite: DiscordCommand = {
 	name: "invite",
 	description: "Invites the given user to the guild",
 	options: [
@@ -140,5 +140,3 @@ const Invite: DiscordCommand = {
 		);
 	},
 };
-
-export default Invite;

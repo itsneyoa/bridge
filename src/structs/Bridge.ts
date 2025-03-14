@@ -19,5 +19,6 @@ export default class Bridge {
 
 	public async start() {
 		this.discord.init();
+		this.minecraft.start();
 	}
 }

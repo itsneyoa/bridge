@@ -4,7 +4,7 @@ import type Chat from "../../structs/Chat";
 import type Event from "../../structs/MinecraftEvent";
 import { FullEmbed, SimpleEmbed, headUrl } from "../../utils/Embed";
 
-const MessageStr: Event<"messagestr"> = {
+export const MessageStr: Event<"messagestr"> = {
 	name: "messagestr",
 	once: false,
 
@@ -302,5 +302,3 @@ const events: Array<
 		},
 	],
 ];
-
-export default MessageStr;

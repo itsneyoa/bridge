@@ -1,6 +1,6 @@
 import type Event from "../../structs/MinecraftEvent";
 
-const MinecraftError: Event<"error"> = {
+export const MinecraftError: Event<"error"> = {
 	name: "error",
 	once: false,
 
@@ -12,5 +12,3 @@ const MinecraftError: Event<"error"> = {
 		}
 	},
 };
-
-export default MinecraftError;
